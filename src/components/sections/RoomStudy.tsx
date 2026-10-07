@@ -66,7 +66,7 @@ export default function RoomStudy() {
 
           <div className="grid-w pointer-events-none absolute inset-0 content-end pb-8 lg:content-center lg:pb-0">
             <div className="pointer-events-auto col-span-6 lg:col-span-4">
-              <p className="t-label mb-4 opacity-60">3D Study — Scroll to assemble</p>
+              <p className="t-label mb-4 opacity-60">3D Study — Scroll to assemble, drag to rotate</p>
               <h2 className="t-h1">
                 A Room,
                 <br />

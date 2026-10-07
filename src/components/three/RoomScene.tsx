@@ -14,6 +14,10 @@ type Vec3 = [number, number, number];
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
+// Camera orbit: the point it circles, and its resting position on that orbit.
+const ORBIT_TARGET = new THREE.Vector3(0, 0.9, 0);
+const ORBIT_BASE = new THREE.Spherical().setFromVector3(new THREE.Vector3(10, 7.5, 10).sub(ORBIT_TARGET));
+
 /** 0→1 as scroll progress passes this piece's slot. */
 const reveal = (progress: Progress, at: number) => easeOut(clamp01(((progress.current ?? 0) - at) / 0.12));
 
@@ -96,11 +100,54 @@ function Lamp({ at, progress, position, color }: { at: number; progress: Progres
 
 function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
   const room = useRef<THREE.Group>(null);
+  const leftSide = useRef<THREE.Group>(null);
+  const backSide = useRef<THREE.Group>(null);
+  const eye = useRef(new THREE.Vector3());
   const sun = useRef<THREE.DirectionalLight>(null);
   const ambient = useRef<THREE.AmbientLight>(null);
   const pendant = useRef<THREE.PointLight>(null);
   const bulb = useRef<THREE.MeshStandardMaterial>(null);
-  const { camera, size } = useThree();
+  const { camera, size, gl } = useThree();
+  // Drag offsets from the resting camera angle; `to*` is where the drag points, the rest eases toward it.
+  const orbit = useRef({ yaw: 0, pitch: 0, toYaw: 0, toPitch: 0 });
+
+  // Drag on the canvas to turn the camera around the room. Vertical touch drags still scroll the page.
+  useEffect(() => {
+    const el = gl.domElement;
+    let drag: { id: number; x: number; y: number } | null = null;
+    el.style.cursor = "grab";
+    el.style.touchAction = "pan-y";
+
+    const down = (e: PointerEvent) => {
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      el.setPointerCapture(e.pointerId);
+      el.style.cursor = "grabbing";
+    };
+    const move = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const o = orbit.current;
+      o.toYaw -= (e.clientX - drag.x) * 0.008;
+      o.toPitch = THREE.MathUtils.clamp(o.toPitch + (e.clientY - drag.y) * 0.005, -0.5, 0.7);
+      drag.x = e.clientX;
+      drag.y = e.clientY;
+    };
+    const up = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      drag = null;
+      el.style.cursor = "grab";
+    };
+
+    el.addEventListener("pointerdown", down);
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+    return () => {
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+    };
+  }, [gl]);
 
   // Pull the camera back on narrow screens so the room stays in frame.
   useEffect(() => {
@@ -111,10 +158,20 @@ function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
 
   useFrame((state, delta) => {
     const p = progress.current ?? 0;
-    camera.lookAt(0, 0.9, 0);
+    const o = orbit.current;
+    o.yaw = THREE.MathUtils.damp(o.yaw, o.toYaw, 6, delta);
+    o.pitch = THREE.MathUtils.damp(o.pitch, o.toPitch, 6, delta);
+    const phi = THREE.MathUtils.clamp(ORBIT_BASE.phi - o.pitch, 0.2, 1.5);
+    camera.position.setFromSphericalCoords(ORBIT_BASE.radius, phi, ORBIT_BASE.theta + o.yaw).add(ORBIT_TARGET);
+    camera.lookAt(ORBIT_TARGET);
     if (room.current) {
       const target = -0.3 + p * 0.6 + state.pointer.x * 0.06;
       room.current.rotation.y = THREE.MathUtils.damp(room.current.rotation.y, target, 4, delta);
+      // Seen from behind, a wall would block the room: drop it and what hangs on it.
+      room.current.updateMatrixWorld();
+      const local = room.current.worldToLocal(eye.current.copy(camera.position));
+      if (leftSide.current) leftSide.current.visible = local.x > -3.1;
+      if (backSide.current) backSide.current.visible = local.z > -3.1;
     }
     // Last stretch of the scroll: daylight fades and the lamps carry the room.
     const night = clamp01((p - 0.82) / 0.16);
@@ -150,32 +207,70 @@ function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
             <Mat color={finish.floor} roughness={0.7} />
           </mesh>
         </Piece>
-        <Piece at={0.05} progress={progress}>
-          <mesh position={[-3.05, 1.6, 0]} receiveShadow>
-            <boxGeometry args={[0.1, 3.4, 6]} />
-            <Mat color={finish.wall} />
-          </mesh>
-        </Piece>
-        <Piece at={0.1} progress={progress}>
-          <mesh position={[0, 1.6, -3.05]} receiveShadow>
-            <boxGeometry args={[6.2, 3.4, 0.1]} />
-            <Mat color={finish.wall} />
-          </mesh>
-        </Piece>
-        <Piece at={0.16} progress={progress} position={[-2.98, 1.75, 1.1]}>
-          <mesh>
-            <boxGeometry args={[0.06, 1.9, 1.6]} />
-            <meshStandardMaterial color="#fff6e6" emissive="#ffe9c4" emissiveIntensity={0.9} />
-          </mesh>
-          <mesh position={[0.03, 0, 0]}>
-            <boxGeometry args={[0.05, 1.9, 0.05]} />
-            <Mat color={finish.accent} />
-          </mesh>
-          <mesh position={[0.03, 0, 0]}>
-            <boxGeometry args={[0.05, 0.05, 1.6]} />
-            <Mat color={finish.accent} />
-          </mesh>
-        </Piece>
+
+        {/* Left wall, with the window and shelf it carries */}
+        <group ref={leftSide}>
+          <Piece at={0.05} progress={progress}>
+            <mesh position={[-3.05, 1.6, 0]} receiveShadow>
+              <boxGeometry args={[0.1, 3.4, 6]} />
+              <Mat color={finish.wall} />
+            </mesh>
+          </Piece>
+          <Piece at={0.16} progress={progress} position={[-2.98, 1.75, 1.1]}>
+            <mesh>
+              <boxGeometry args={[0.06, 1.9, 1.6]} />
+              <meshStandardMaterial color="#fff6e6" emissive="#ffe9c4" emissiveIntensity={0.9} />
+            </mesh>
+            <mesh position={[0.03, 0, 0]}>
+              <boxGeometry args={[0.05, 1.9, 0.05]} />
+              <Mat color={finish.accent} />
+            </mesh>
+            <mesh position={[0.03, 0, 0]}>
+              <boxGeometry args={[0.05, 0.05, 1.6]} />
+              <Mat color={finish.accent} />
+            </mesh>
+          </Piece>
+          <Piece at={0.57} progress={progress} position={[-2.85, 1.7, -1.3]}>
+            <mesh castShadow>
+              <boxGeometry args={[0.3, 0.05, 1.9]} />
+              <Mat color={finish.accent} roughness={0.6} />
+            </mesh>
+            {[-0.7, -0.55, -0.42].map((z, i) => (
+              <mesh key={z} position={[0, 0.2 - i * 0.02, z]} castShadow>
+                <boxGeometry args={[0.2, 0.34 - i * 0.04, 0.09]} />
+                <Mat color={["#f1eade", "#9faf9b", "#3f383c"][i]} />
+              </mesh>
+            ))}
+            <mesh position={[0, 0.2, 0.4]} castShadow>
+              <capsuleGeometry args={[0.09, 0.16, 6, 16]} />
+              <Mat color="#f1eade" roughness={0.5} />
+            </mesh>
+          </Piece>
+        </group>
+
+        {/* Back wall */}
+        <group ref={backSide}>
+          <Piece at={0.1} progress={progress}>
+            <mesh position={[0, 1.6, -3.05]} receiveShadow>
+              <boxGeometry args={[6.2, 3.4, 0.1]} />
+              <Mat color={finish.wall} />
+            </mesh>
+          </Piece>
+          <Piece at={0.62} progress={progress} position={[1.5, 2.1, -2.97]}>
+            <mesh castShadow>
+              <boxGeometry args={[1.1, 1.45, 0.06]} />
+              <meshStandardMaterial color="#1a1819" />
+            </mesh>
+            <mesh position={[0, 0, 0.035]}>
+              <planeGeometry args={[0.95, 1.3]} />
+              <Mat color="#f1eade" />
+            </mesh>
+            <mesh position={[0.05, -0.1, 0.04]}>
+              <circleGeometry args={[0.3, 48]} />
+              <Mat color={finish.accent} />
+            </mesh>
+          </Piece>
+        </group>
 
         {/* Ground */}
         <Piece at={0.27} progress={progress} position={[0.3, 0.02, 0.3]}>
@@ -232,36 +327,6 @@ function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
               </mesh>
             ))
           )}
-        </Piece>
-        <Piece at={0.57} progress={progress} position={[-2.85, 1.7, -1.3]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.3, 0.05, 1.9]} />
-            <Mat color={finish.accent} roughness={0.6} />
-          </mesh>
-          {[-0.7, -0.55, -0.42].map((z, i) => (
-            <mesh key={z} position={[0, 0.2 - i * 0.02, z]} castShadow>
-              <boxGeometry args={[0.2, 0.34 - i * 0.04, 0.09]} />
-              <Mat color={["#f1eade", "#9faf9b", "#3f383c"][i]} />
-            </mesh>
-          ))}
-          <mesh position={[0, 0.2, 0.4]} castShadow>
-            <capsuleGeometry args={[0.09, 0.16, 6, 16]} />
-            <Mat color="#f1eade" roughness={0.5} />
-          </mesh>
-        </Piece>
-        <Piece at={0.62} progress={progress} position={[1.5, 2.1, -2.97]}>
-          <mesh castShadow>
-            <boxGeometry args={[1.1, 1.45, 0.06]} />
-            <meshStandardMaterial color="#1a1819" />
-          </mesh>
-          <mesh position={[0, 0, 0.035]}>
-            <planeGeometry args={[0.95, 1.3]} />
-            <Mat color="#f1eade" />
-          </mesh>
-          <mesh position={[0.05, -0.1, 0.04]}>
-            <circleGeometry args={[0.3, 48]} />
-            <Mat color={finish.accent} />
-          </mesh>
         </Piece>
         <Piece at={0.67} progress={progress} position={[2.4, 0, -2.3]}>
           <mesh position={[0, 0.3, 0]} castShadow>
