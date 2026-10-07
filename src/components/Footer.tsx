@@ -41,9 +41,9 @@ export default function Footer() {
       </div>
 
       <div className="mt-14 px-[var(--margin)] lg:mt-20">
-        <div className="flex items-end justify-between gap-x-[0.2em] whitespace-nowrap font-display text-[15.2vw] leading-[0.8] tracking-[-0.04em]">
-          <SplitTitle text="Umbra" />
-          <SplitTitle text="Atelier" className="text-umber" delay={0.15} />
+        <div className="flex items-end justify-between gap-x-[0.2em] whitespace-nowrap font-display text-[9.4vw] leading-[0.8] tracking-[-0.04em]">
+          <SplitTitle text="Integrity" />
+          <SplitTitle text="360 Degree" className="text-umber" delay={0.15} />
         </div>
       </div>
 

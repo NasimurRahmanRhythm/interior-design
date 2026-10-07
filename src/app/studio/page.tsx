@@ -7,7 +7,7 @@ import People from "@/components/sections/People";
 import Admission from "@/components/sections/Admission";
 import { stats } from "@/lib/data";
 
-export const metadata: Metadata = { title: "Studio — Umbra Atelier" };
+export const metadata: Metadata = { title: "Studio — Integrity 360 Degree" };
 
 export default function StudioPage() {
   return (

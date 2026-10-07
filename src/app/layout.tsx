@@ -18,9 +18,9 @@ const instrument = Instrument_Serif({
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Umbra Atelier — Interiors Shaped Quietly",
+  title: "Integrity 360 Degree — Interiors Shaped Quietly",
   description:
-    "Umbra Atelier is an independent interior design practice shaping private rooms and the objects formed within them.",
+    "Integrity 360 Degree is an independent interior design practice shaping private rooms and the objects formed within them.",
 };
 
 export const viewport: Viewport = {

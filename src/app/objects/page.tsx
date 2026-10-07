@@ -5,7 +5,7 @@ import RevealText from "@/components/RevealText";
 import RoomStudy from "@/components/sections/RoomStudy";
 import { objects } from "@/lib/data";
 
-export const metadata: Metadata = { title: "Objects — Umbra Atelier" };
+export const metadata: Metadata = { title: "Objects — Integrity 360 Degree" };
 
 export default function ObjectsPage() {
   return (

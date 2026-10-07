@@ -6,7 +6,7 @@ import RevealText from "@/components/RevealText";
 import Admission from "@/components/sections/Admission";
 import { spaces } from "@/lib/data";
 
-export const metadata: Metadata = { title: "Spaces — Umbra Atelier" };
+export const metadata: Metadata = { title: "Spaces — Integrity 360 Degree" };
 
 export default function SpacesPage() {
   return (

@@ -1,10 +1,10 @@
 // All content below is placeholder data for the demo.
 
 export const brand = {
-  name: "Umbra Atelier",
-  lines: ["The", "Umbra", "Atelier"],
+  name: "Integrity 360 Degree",
+  lines: ["Integrity", "360", "Degree"],
   tagline: "A Private Atelier for Interiors",
-  email: "studio@umbra-atelier.example",
+  email: "studio@integrity360degree.example",
 };
 
 export const nav = [
