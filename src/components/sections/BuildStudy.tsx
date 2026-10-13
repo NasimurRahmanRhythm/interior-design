@@ -3,23 +3,39 @@
 import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { finishes, roomSteps } from "@/lib/data";
+import { builds, finishes, type BuildKind } from "@/lib/data";
 
 const RoomScene = dynamic(() => import("../three/RoomScene"), { ssr: false });
+const StallScene = dynamic(() => import("../three/StallScene"), { ssr: false });
+const StageScene = dynamic(() => import("../three/StageScene"), { ssr: false });
 
-// Scroll thresholds at which each step of the 3D room begins.
-const STEP_STARTS = [0, 0.26, 0.43, 0.75];
+// Scroll thresholds at which each step of a scene begins.
+const STEP_STARTS: Record<BuildKind, number[]> = {
+  stall: [0, 0.26, 0.5, 0.75],
+  office: [0, 0.26, 0.43, 0.75],
+  stage: [0, 0.26, 0.5, 0.75],
+};
 
-export default function RoomStudy() {
+const SCENE_CLASS = "absolute inset-x-0 top-[9svh] h-[50svh] lg:inset-y-0 lg:left-[34%] lg:right-0 lg:top-0 lg:h-auto";
+
+export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind }) {
   const root = useRef<HTMLElement>(null);
   const progress = useRef(0);
+  const [kind, setKind] = useState<BuildKind>(initial);
   const [step, setStep] = useState(0);
   const [night, setNight] = useState(false);
-  const [finish, setFinish] = useState(0);
+  const starts = useRef(STEP_STARTS[initial]);
+  const build = builds.find((b) => b.id === kind)!;
+
+  const choose = (next: BuildKind) => {
+    starts.current = STEP_STARTS[next];
+    setKind(next);
+    setStep(STEP_STARTS[next].reduce((acc, start, i) => (progress.current >= start ? i : acc), 0));
+  };
 
   useGSAP(
     () => {
-      const trigger = ".room-track";
+      const trigger = ".build-track";
 
       ScrollTrigger.create({
         trigger,
@@ -27,12 +43,12 @@ export default function RoomStudy() {
         end: "bottom bottom",
         onUpdate: (self) => {
           progress.current = self.progress;
-          setStep(STEP_STARTS.reduce((acc, start, i) => (self.progress >= start ? i : acc), 0));
+          setStep(starts.current.reduce((acc, start, i) => (self.progress >= start ? i : acc), 0));
           setNight(self.progress > 0.9);
         },
       });
 
-      gsap.to(".room-bar", {
+      gsap.to(".build-bar", {
         scaleY: 1,
         ease: "none",
         scrollTrigger: { trigger, start: "top top", end: "bottom bottom", scrub: true },
@@ -40,7 +56,7 @@ export default function RoomStudy() {
 
       // Daylight fades at the end of the scroll and the section follows it.
       gsap.fromTo(
-        ".room-stage",
+        ".build-stage",
         { backgroundColor: "#f1eade", color: "#151415" },
         {
           backgroundColor: "#151415",
@@ -56,27 +72,25 @@ export default function RoomStudy() {
 
   return (
     <section ref={root} data-theme={night ? "dark" : "light"} className="relative bg-bone">
-      <div className="room-track relative h-[460vh]">
-        <div className="room-stage sticky top-0 h-svh overflow-hidden bg-bone text-ink">
-          <RoomScene
-            progress={progress}
-            finish={finishes[finish]}
-            className="absolute inset-x-0 top-[9svh] h-[52svh] lg:inset-y-0 lg:left-[34%] lg:right-0 lg:top-0 lg:h-auto"
-          />
+      <div className="build-track relative h-[460vh]">
+        <div className="build-stage sticky top-0 h-svh overflow-hidden bg-bone text-ink">
+          {kind === "stall" && <StallScene progress={progress} className={SCENE_CLASS} />}
+          {kind === "office" && <RoomScene progress={progress} finish={finishes[0]} className={SCENE_CLASS} />}
+          {kind === "stage" && <StageScene progress={progress} className={SCENE_CLASS} />}
 
           <div className="grid-w pointer-events-none absolute inset-0 content-end pb-8 lg:content-center lg:pb-0">
             <div className="pointer-events-auto col-span-6 lg:col-span-4">
-              <p className="t-label mb-4 opacity-60">3D Study — Scroll to assemble, drag to rotate</p>
+              <p className="t-label mb-4 opacity-60">3D Study — Scroll to build, drag to rotate</p>
               <h2 className="t-h1">
-                A Room,
+                {build.title[0]}
                 <br />
-                <span className="ml-[0.8em] italic">Assembled</span>
+                <span className="ml-[0.8em] italic">{build.title[1]}</span>
               </h2>
 
-              <ol className="relative mt-8 flex flex-col gap-4 pl-6 lg:mt-12 lg:gap-6">
+              <ol className="relative mt-6 flex flex-col gap-3 pl-6 lg:mt-12 lg:gap-6">
                 <span className="absolute bottom-1 left-0 top-1 w-px bg-current opacity-15" />
-                <span className="room-bar absolute bottom-1 left-0 top-1 w-px origin-top scale-y-0 bg-current" />
-                {roomSteps.map((item, i) => (
+                <span className="build-bar absolute bottom-1 left-0 top-1 w-px origin-top scale-y-0 bg-current" />
+                {build.steps.map((item, i) => (
                   <li
                     key={item.title}
                     className={`transition-opacity duration-700 ease-cubic ${i === step ? "opacity-100" : "opacity-30"}`}
@@ -97,23 +111,23 @@ export default function RoomStudy() {
                   </li>
                 ))}
               </ol>
-            </div>
 
-            <div className="pointer-events-auto col-span-6 mt-6 lg:absolute lg:bottom-10 lg:right-[var(--margin)] lg:mt-0">
-              <p className="t-label mb-3 opacity-60 lg:text-right">Finish</p>
-              <div className="flex flex-wrap gap-2">
-                {finishes.map((item, i) => (
+              <div className="mt-6 flex flex-wrap gap-2 lg:mt-10" role="tablist" aria-label="Choose what to build">
+                {builds.map((item) => (
                   <button
-                    key={item.name}
+                    key={item.id}
                     type="button"
-                    onClick={() => setFinish(i)}
-                    aria-pressed={i === finish}
-                    className={`flex items-center gap-2 border px-3 py-2 t-label transition-colors duration-500 ${
-                      i === finish ? "border-current" : "border-current/20 hover:border-current/60"
+                    role="tab"
+                    aria-selected={item.id === kind}
+                    onClick={() => choose(item.id)}
+                    className={`border px-3 py-2 t-label transition-colors duration-500 ${
+                      item.id === kind
+                        ? "border-current bg-current [&>span]:text-[var(--bg)]"
+                        : "border-current/25 hover:border-current/70"
                     }`}
+                    data-tone={night ? "dark" : "light"}
                   >
-                    <span className="h-3 w-3 rounded-full border border-current/30" style={{ background: item.floor }} />
-                    {item.name}
+                    <span>{item.label}</span>
                   </button>
                 ))}
               </div>

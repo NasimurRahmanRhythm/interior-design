@@ -1,25 +1,27 @@
 import Hero from "@/components/sections/Hero";
-import Spaces from "@/components/sections/Spaces";
-import MapSection from "@/components/sections/MapSection";
-import Objects from "@/components/sections/Objects";
-import RoomStudy from "@/components/sections/RoomStudy";
-import Connection from "@/components/sections/Connection";
-import Updates from "@/components/sections/Updates";
-import People from "@/components/sections/People";
-import Admission from "@/components/sections/Admission";
+import Trust from "@/components/sections/Trust";
+import Journey from "@/components/sections/Journey";
+import Divisions from "@/components/sections/Divisions";
+import BuildStudy from "@/components/sections/BuildStudy";
+import Work from "@/components/sections/Work";
+import Reach from "@/components/sections/Reach";
+import Clients from "@/components/sections/Clients";
+import Process from "@/components/sections/Process";
+import Contact from "@/components/sections/Contact";
 
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <Spaces />
-      <MapSection />
-      <Objects />
-      <RoomStudy />
-      <Connection />
-      <Updates />
-      <People />
-      <Admission />
+      <Trust />
+      <Journey />
+      <Divisions />
+      <BuildStudy />
+      <Work />
+      <Reach />
+      <Clients />
+      <Process />
+      <Contact />
     </>
   );
 }

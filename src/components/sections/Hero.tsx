@@ -2,13 +2,15 @@
 
 import { useRef } from "react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Button from "../Button";
 import SplitTitle from "../SplitTitle";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { onReady } from "@/lib/ready";
+import { brand, heroPanels } from "@/lib/data";
 
-const StoneScene = dynamic(() => import("../three/StoneScene"), { ssr: false });
+const HeroPanels = dynamic(() => import("../three/HeroPanels"), { ssr: false });
+
+const LINE = "block font-display text-[clamp(3.6rem,9.4vw,10rem)] leading-[0.86] tracking-[-0.04em]";
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -20,13 +22,12 @@ export default function Hero() {
 
       ScrollTrigger.create({ ...scroll, onUpdate: (self) => (progress.current = self.progress) });
 
-      // The three words drift apart while the stone grows between them.
-      gsap.to(".hero-l1", { xPercent: -18, ease: "none", scrollTrigger: scroll });
-      gsap.to(".hero-l2", { xPercent: 14, ease: "none", scrollTrigger: scroll });
-      gsap.to(".hero-l3", { xPercent: -10, ease: "none", scrollTrigger: scroll });
+      // The four lines drift apart while the photos spread behind them.
+      gsap.to(".hero-l1", { xPercent: -14, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-l2", { xPercent: 10, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-l3", { xPercent: -8, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-l4", { xPercent: 12, ease: "none", scrollTrigger: scroll });
       gsap.to(".hero-meta", { opacity: 0, ease: "none", scrollTrigger: { ...scroll, end: "40% bottom" } });
-      gsap.fromTo(".hero-fig-a", { yPercent: 240 }, { yPercent: -20, ease: "none", scrollTrigger: scroll });
-      gsap.fromTo(".hero-fig-b", { yPercent: 160 }, { yPercent: -60, ease: "none", scrollTrigger: scroll });
 
       const intro = gsap.from(".hero-in", {
         y: 28,
@@ -34,7 +35,7 @@ export default function Hero() {
         duration: 1.2,
         ease: "power3.out",
         stagger: 0.15,
-        delay: 0.5,
+        delay: 0.6,
         paused: true,
       });
       return onReady(() => intro.play());
@@ -47,50 +48,43 @@ export default function Hero() {
       <div className="grain sticky top-0 h-svh overflow-hidden">
         <div
           className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at 50% 55%, rgba(123,81,54,0.28), transparent 62%)" }}
+          style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(123,81,54,0.26), transparent 60%)" }}
         />
 
-        <h1 className="absolute inset-0 px-[var(--margin)]">
-          <span className="hero-l1 absolute left-[var(--margin)] top-[13svh] block lg:top-[11svh]">
-            <SplitTitle text="Rooms" className="t-lrg" when="ready" />
+        <HeroPanels panels={heroPanels} progress={progress} className="pointer-events-none absolute inset-0" />
+
+        <h1 className="pointer-events-none absolute inset-x-0 bottom-[22svh] z-10 px-[var(--margin)] lg:bottom-auto lg:top-[22svh]">
+          <span className="hero-l1 block">
+            <SplitTitle text="One Team" className={LINE} when="ready" />
           </span>
-          <span className="hero-l2 absolute right-[var(--margin)] top-1/2 block -translate-y-1/2">
-            <SplitTitle text="Shaped" className="t-lrg" when="ready" delay={0.12} />
+          <span className="hero-l2 ml-[0.5em] block lg:ml-[1.1em]">
+            <SplitTitle text="for your Brand," className={`${LINE} font-serif italic`} when="ready" delay={0.1} />
           </span>
-          <span className="hero-l3 absolute bottom-[19svh] left-[var(--margin)] block lg:bottom-[5svh] lg:left-[16vw]">
-            <SplitTitle text="Quietly" className="t-lrg" when="ready" delay={0.24} />
+          <span className="hero-l3 block">
+            <SplitTitle text="Events &" className={LINE} when="ready" delay={0.2} />
+          </span>
+          <span className="hero-l4 ml-[0.6em] block">
+            <SplitTitle text="Spaces" className={LINE} when="ready" delay={0.3} />
           </span>
         </h1>
 
-        <StoneScene progress={progress} className="pointer-events-none absolute inset-0" />
-
-        <div className="hero-fig-a fit absolute left-[var(--margin)] top-[58%] hidden aspect-[3/4] w-[11vw] lg:block">
-          <Image src="/images/misc/pendant.jpg" alt="Brass pendant lamps" fill sizes="12vw" loading="eager" className="object-cover" />
-        </div>
-        <div className="hero-fig-b fit absolute right-[18vw] top-[70%] hidden aspect-[4/3] w-[15vw] lg:block">
-          <Image src="/images/misc/sofa.jpg" alt="Linen sofa with a wool throw" fill sizes="16vw" className="object-cover" />
-        </div>
-
-        <div className="hero-meta absolute inset-0">
-          <p className="hero-in t-label absolute right-[var(--margin)] top-[15svh] text-right lg:right-[26vw] lg:top-[18svh] lg:text-left">
-            Coordinates
-            <br />
-            Withheld
-          </p>
-          <p className="hero-in t-label absolute left-[var(--margin)] top-[39svh] lg:left-[calc(var(--margin)+25vw)] lg:top-[47svh]">
-            A Private Atelier
-            <br />
-            for Interiors
-          </p>
-          <div className="hero-in absolute bottom-[4svh] left-[var(--margin)] right-[var(--margin)] flex items-end justify-between gap-6 lg:left-auto lg:justify-end">
-            <span className="flex flex-col text-sm leading-tight lg:text-right">
-              <span>Commitment</span>
-              <span>Precedes</span>
-              <span>Entry /</span>
-            </span>
-            <Button href="/#admission" big>
-              Seek Admission
-            </Button>
+        <div className="hero-meta absolute inset-0 z-10">
+          <div className="hero-in absolute bottom-[4svh] left-[var(--margin)] right-[var(--margin)] flex items-end justify-between gap-6">
+            <div>
+              <p className="t-label mb-1 opacity-50">Belief</p>
+              <p className="t-h5 italic">{brand.belief}.</p>
+            </div>
+            <p className="t-label hidden opacity-70 lg:block">Move to explore · Scroll</p>
+            <div className="flex items-end gap-6 pr-16 lg:pr-20">
+              <p className="t-label hidden text-right opacity-70 sm:block">
+                Since 2010
+                <br />
+                Banani, Dhaka
+              </p>
+              <Button href="/#contact" big>
+                Get a Quote
+              </Button>
+            </div>
           </div>
         </div>
       </div>

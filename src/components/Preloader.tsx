@@ -47,7 +47,7 @@ export default function Preloader() {
       style={{ clipPath: "inset(0 0 0% 0)" }}
       aria-hidden="true"
     >
-      <span className="t-label opacity-50">Nothing shown first</span>
+      <span className="t-label opacity-50">{brand.tagline}</span>
       <div className="font-display text-[clamp(2.5rem,7vw,6rem)] leading-[0.9] tracking-tight">
         {brand.lines.map((line, i) => (
           <span key={line} className="pl-line line-mask" style={{ paddingLeft: `${i * 0.6}em` }}>

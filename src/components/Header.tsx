@@ -84,8 +84,8 @@ export default function Header() {
           <span className="hidden h-8 w-px justify-self-center bg-current opacity-30 lg:col-start-4 lg:block" />
 
           <nav className="pointer-events-auto hidden items-center gap-[var(--gap)] lg:col-span-3 lg:col-start-5 lg:flex">
-            <Button href="/spaces">Spaces</Button>
-            <Button href="/objects">Objects</Button>
+            <Button href="/#services">Services</Button>
+            <Button href="/#work">Work</Button>
           </nav>
 
           <div className="pointer-events-auto col-span-3 col-start-4 flex items-center justify-end gap-[var(--gap)] lg:col-span-4 lg:col-start-9">
@@ -94,7 +94,7 @@ export default function Header() {
                 scrolled && !open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0"
               }`}
             >
-              <Button href="/#admission">Seek Admission</Button>
+              <Button href="/#contact">Get a Quote</Button>
             </div>
 
             <button
@@ -169,11 +169,20 @@ export default function Header() {
               >
                 <p className="t-label opacity-50">{brand.tagline}</p>
                 <p className="text-sm opacity-70">
-                  Seven rooms in operation. Their addresses are shared after admission, never before.
+                  {brand.address[0]}
+                  <br />
+                  {brand.address[1]}
                 </p>
-                <a href={`mailto:${brand.email}`} className="link-u w-fit text-sm">
-                  {brand.email}
-                </a>
+                <div className="flex flex-col gap-1 text-sm">
+                  {brand.phones.map((p) => (
+                    <a key={p} href={`tel:${p}`} className="link-u w-fit">
+                      {p}
+                    </a>
+                  ))}
+                  <a href={`mailto:${brand.email}`} className="link-u w-fit">
+                    {brand.email}
+                  </a>
+                </div>
               </motion.div>
             </div>
           </motion.div>

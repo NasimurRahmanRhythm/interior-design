@@ -1,73 +1,13 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import SceneCanvas from "./SceneCanvas";
+import { DayLight, Mat, Piece, reveal, useOrbitCamera, type Progress, type Vec3 } from "./build";
 
 export type Finish = { name: string; floor: string; wall: string; accent: string; fabric: string };
-
-type Progress = RefObject<number>;
-type Vec3 = [number, number, number];
-
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-
-// Camera orbit: the point it circles, and its resting position on that orbit.
-const ORBIT_TARGET = new THREE.Vector3(0, 0.9, 0);
-const ORBIT_BASE = new THREE.Spherical().setFromVector3(new THREE.Vector3(10, 7.5, 10).sub(ORBIT_TARGET));
-
-/** 0→1 as scroll progress passes this piece's slot. */
-const reveal = (progress: Progress, at: number) => easeOut(clamp01(((progress.current ?? 0) - at) / 0.12));
-
-// A piece of the room that drops into place once scroll progress reaches `at`.
-function Piece({
-  at,
-  progress,
-  position = [0, 0, 0],
-  rotation,
-  children,
-}: {
-  at: number;
-  progress: Progress;
-  position?: Vec3;
-  rotation?: Vec3;
-  children: React.ReactNode;
-}) {
-  const group = useRef<THREE.Group>(null);
-
-  useFrame(() => {
-    const g = group.current;
-    if (!g) return;
-    const t = reveal(progress, at);
-    g.visible = t > 0.001;
-    g.position.y = position[1] + (1 - t) * 2.4;
-    g.scale.setScalar(0.6 + t * 0.4);
-  });
-
-  return (
-    <group ref={group} position={position} rotation={rotation} visible={false}>
-      {children}
-    </group>
-  );
-}
-
-// Standard material whose colour eases toward the chosen finish.
-function Mat({ color, roughness = 0.85, metalness = 0 }: { color: string; roughness?: number; metalness?: number }) {
-  const mat = useRef<THREE.MeshStandardMaterial>(null);
-  const target = useRef(new THREE.Color(color));
-
-  useEffect(() => {
-    target.current.set(color);
-  }, [color]);
-
-  useFrame((_, delta) => {
-    mat.current?.color.lerp(target.current, 1 - Math.exp(-delta * 5));
-  });
-
-  return <meshStandardMaterial ref={mat} color={color} roughness={roughness} metalness={metalness} />;
-}
 
 function Lamp({ at, progress, position, color }: { at: number; progress: Progress; position: Vec3; color: string }) {
   const light = useRef<THREE.PointLight>(null);
@@ -103,67 +43,13 @@ function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
   const leftSide = useRef<THREE.Group>(null);
   const backSide = useRef<THREE.Group>(null);
   const eye = useRef(new THREE.Vector3());
-  const sun = useRef<THREE.DirectionalLight>(null);
-  const ambient = useRef<THREE.AmbientLight>(null);
   const pendant = useRef<THREE.PointLight>(null);
   const bulb = useRef<THREE.MeshStandardMaterial>(null);
-  const { camera, size, gl } = useThree();
-  // Drag offsets from the resting camera angle; `to*` is where the drag points, the rest eases toward it.
-  const orbit = useRef({ yaw: 0, pitch: 0, toYaw: 0, toPitch: 0 });
-
-  // Drag on the canvas to turn the camera around the room. Vertical touch drags still scroll the page.
-  useEffect(() => {
-    const el = gl.domElement;
-    let drag: { id: number; x: number; y: number } | null = null;
-    el.style.cursor = "grab";
-    el.style.touchAction = "pan-y";
-
-    const down = (e: PointerEvent) => {
-      drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
-      el.setPointerCapture(e.pointerId);
-      el.style.cursor = "grabbing";
-    };
-    const move = (e: PointerEvent) => {
-      if (!drag || e.pointerId !== drag.id) return;
-      const o = orbit.current;
-      o.toYaw -= (e.clientX - drag.x) * 0.008;
-      o.toPitch = THREE.MathUtils.clamp(o.toPitch + (e.clientY - drag.y) * 0.005, -0.5, 0.7);
-      drag.x = e.clientX;
-      drag.y = e.clientY;
-    };
-    const up = (e: PointerEvent) => {
-      if (!drag || e.pointerId !== drag.id) return;
-      drag = null;
-      el.style.cursor = "grab";
-    };
-
-    el.addEventListener("pointerdown", down);
-    el.addEventListener("pointermove", move);
-    el.addEventListener("pointerup", up);
-    el.addEventListener("pointercancel", up);
-    return () => {
-      el.removeEventListener("pointerdown", down);
-      el.removeEventListener("pointermove", move);
-      el.removeEventListener("pointerup", up);
-      el.removeEventListener("pointercancel", up);
-    };
-  }, [gl]);
-
-  // Pull the camera back on narrow screens so the room stays in frame.
-  useEffect(() => {
-    const cam = camera as THREE.PerspectiveCamera;
-    cam.fov = size.width / size.height < 1 ? 50 : 36;
-    cam.updateProjectionMatrix();
-  }, [camera, size]);
+  const { camera } = useThree();
+  useOrbitCamera([10, 7.5, 10], [0, 0.9, 0]);
 
   useFrame((state, delta) => {
     const p = progress.current ?? 0;
-    const o = orbit.current;
-    o.yaw = THREE.MathUtils.damp(o.yaw, o.toYaw, 6, delta);
-    o.pitch = THREE.MathUtils.damp(o.pitch, o.toPitch, 6, delta);
-    const phi = THREE.MathUtils.clamp(ORBIT_BASE.phi - o.pitch, 0.2, 1.5);
-    camera.position.setFromSphericalCoords(ORBIT_BASE.radius, phi, ORBIT_BASE.theta + o.yaw).add(ORBIT_TARGET);
-    camera.lookAt(ORBIT_TARGET);
     if (room.current) {
       const target = -0.3 + p * 0.6 + state.pointer.x * 0.06;
       room.current.rotation.y = THREE.MathUtils.damp(room.current.rotation.y, target, 4, delta);
@@ -174,9 +60,6 @@ function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
       if (backSide.current) backSide.current.visible = local.z > -3.1;
     }
     // Last stretch of the scroll: daylight fades and the lamps carry the room.
-    const night = clamp01((p - 0.82) / 0.16);
-    if (sun.current) sun.current.intensity = 2.6 * (1 - night * 0.9);
-    if (ambient.current) ambient.current.intensity = 0.7 * (1 - night * 0.75);
     const glow = reveal(progress, 0.86);
     if (pendant.current) pendant.current.intensity = glow * 12;
     if (bulb.current) bulb.current.emissiveIntensity = glow * 2;
@@ -184,20 +67,7 @@ function Room({ progress, finish }: { progress: Progress; finish: Finish }) {
 
   return (
     <>
-      <ambientLight ref={ambient} intensity={0.7} color="#f1eade" />
-      <directionalLight
-        ref={sun}
-        position={[5, 8, 6]}
-        intensity={2.6}
-        color="#fff1dc"
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-6}
-        shadow-camera-right={6}
-        shadow-camera-top={6}
-        shadow-camera-bottom={-6}
-        shadow-bias={-0.0004}
-      />
+      <DayLight progress={progress} />
 
       <group ref={room} position={[0, -0.6, 0]}>
         {/* Shell */}

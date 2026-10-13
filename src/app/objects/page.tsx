@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import PageHero from "@/components/PageHero";
 import RevealText from "@/components/RevealText";
-import RoomStudy from "@/components/sections/RoomStudy";
+import BuildStudy from "@/components/sections/BuildStudy";
 import { objects } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Objects — Integrity 360 Degree" };
@@ -54,7 +54,7 @@ export default function ObjectsPage() {
         </ul>
       </section>
 
-      <RoomStudy />
+      <BuildStudy initial="office" />
     </>
   );
 }

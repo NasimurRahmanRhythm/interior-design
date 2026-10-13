@@ -6,6 +6,7 @@ import Preloader from "@/components/Preloader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const bodoni = Bodoni_Moda({ subsets: ["latin"], variable: "--font-bodoni", display: "swap" });
 const instrument = Instrument_Serif({
@@ -18,9 +19,9 @@ const instrument = Instrument_Serif({
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Integrity 360 Degree — Interiors Shaped Quietly",
+  title: "Integrity 360 Degree — Events, Exhibitions, Interiors & Brand",
   description:
-    "Integrity 360 Degree is an independent interior design practice shaping private rooms and the objects formed within them.",
+    "Integrity 360 Degree is a Dhaka-based 360° agency, established in 2010: event and fair management, exhibition stalls, interior and architectural design, PR, media and digital.",
 };
 
 export const viewport: Viewport = {
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main>{children}</main>
           <Footer />
+          <WhatsAppButton />
         </SmoothScroll>
       </body>
     </html>
