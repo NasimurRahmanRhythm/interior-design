@@ -30,7 +30,7 @@ function compose(data: FormData) {
   return { subject: `Quote request — ${data.get("division") || "Integrity 360 Degree"}`, body: lines.join("\n") };
 }
 
-export default function Contact() {
+export default function Contact({ division }: { division?: string }) {
   const [sent, setSent] = useState(false);
   const [whatsapp, setWhatsapp] = useState(`https://wa.me/${brand.whatsapp}`);
 
@@ -86,7 +86,11 @@ export default function Contact() {
                 {selects.map((field) => (
                   <label key={field.name} className="flex flex-col gap-2">
                     <span className="t-label opacity-60">{field.label}</span>
-                    <select name={field.name} required defaultValue="" className={`${FIELD} cursor-pointer appearance-none [&>option]:bg-ink`}>
+                    <select
+                      name={field.name}
+                      required
+                      defaultValue={field.name === "division" && division ? division : ""}
+                      className={`${FIELD} cursor-pointer appearance-none [&>option]:bg-ink`}>
                       <option value="" disabled>
                         Choose
                       </option>

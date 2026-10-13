@@ -2,10 +2,14 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Button from "../Button";
 import SplitTitle from "../SplitTitle";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { featuredWork } from "@/lib/data";
+import { getProject, type Project } from "@/lib/projects";
+
+const work = featuredWork.map((slug) => getProject(slug)).filter((p): p is Project => Boolean(p));
 
 export default function Work() {
   const root = useRef<HTMLElement>(null);
@@ -52,24 +56,33 @@ export default function Work() {
               <SplitTitle text="Work" className="font-serif italic" delay={0.1} />
             </h2>
             <div className="col-span-6 mt-4 lg:col-span-3 lg:mt-0 lg:justify-self-end">
-              <Button href="/#contact">Start yours</Button>
+              <Button href="/projects">All projects</Button>
             </div>
           </div>
 
           <div ref={strip} className="relative mt-10 flex w-max items-start gap-[3vw] will-change-transform lg:mt-8">
-            {featuredWork.map((item, i) => (
-              <figure key={item.id} className={`work-card w-[62vw] shrink-0 sm:w-[38vw] lg:w-[21vw] ${i % 2 ? "mt-[5svh]" : ""}`}>
+            {work.map((item, i) => (
+              <Link
+                key={item.slug}
+                href={`/projects/${item.slug}`}
+                className={`work-card group block w-[62vw] shrink-0 sm:w-[38vw] lg:w-[21vw] ${i % 2 ? "mt-[5svh]" : ""}`}
+              >
                 <div className="fit aspect-[4/5] bg-stone shadow-[0_30px_50px_rgba(0,0,0,0.35)]">
-                  <Image src={item.image} alt={`${item.title}, ${item.client}`} fill sizes="(min-width:1024px) 21vw, 62vw" className="object-cover" />
+                  <Image
+                    src={item.images[0].src}
+                    alt={`${item.title}${item.client ? `, ${item.client}` : ""}`}
+                    fill
+                    sizes="(min-width:1024px) 21vw, 62vw"
+                    className="object-cover transition-transform duration-1000 ease-cubic group-hover:scale-105"
+                  />
                 </div>
-                <figcaption className="mt-4">
-                  <p className="t-label opacity-55">
-                    {item.kind}
-                    {item.year ? ` · ${item.year}` : ""} — {item.client}
-                  </p>
-                  <p className="t-h5 mt-1">{item.title}</p>
-                </figcaption>
-              </figure>
+                <p className="t-label mt-4 opacity-55">
+                  {item.category}
+                  {item.year ? ` · ${item.year}` : ""}
+                  {item.client ? ` — ${item.client}` : ""}
+                </p>
+                <p className="t-h5 mt-1">{item.title}</p>
+              </Link>
             ))}
           </div>
         </div>

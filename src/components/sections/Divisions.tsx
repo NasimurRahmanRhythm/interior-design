@@ -142,7 +142,10 @@ export default function Divisions() {
             </div>
             <div className="col-span-6 mt-5 flex items-center justify-between gap-4 pr-16 lg:col-span-4 lg:mt-0 lg:justify-end lg:pr-20">
               <p className="t-label opacity-60 lg:hidden">Drag or scroll to turn</p>
-              <Button href="/#contact">Discuss a project</Button>
+              <div className="flex gap-2">
+                <Button href={`/services/${current.id}`}>Explore</Button>
+                <Button href="#contact">Discuss a project</Button>
+              </div>
             </div>
           </div>
         </div>

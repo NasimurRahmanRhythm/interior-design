@@ -84,8 +84,8 @@ export default function Header() {
           <span className="hidden h-8 w-px justify-self-center bg-current opacity-30 lg:col-start-4 lg:block" />
 
           <nav className="pointer-events-auto hidden items-center gap-[var(--gap)] lg:col-span-3 lg:col-start-5 lg:flex">
-            <Button href="/#services">Services</Button>
-            <Button href="/#work">Work</Button>
+            <Button href="/services">Services</Button>
+            <Button href="/projects">Projects</Button>
           </nav>
 
           <div className="pointer-events-auto col-span-3 col-start-4 flex items-center justify-end gap-[var(--gap)] lg:col-span-4 lg:col-start-9">
@@ -94,7 +94,7 @@ export default function Header() {
                 scrolled && !open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0"
               }`}
             >
-              <Button href="/#contact">Get a Quote</Button>
+              <Button href="/contact">Get a Quote</Button>
             </div>
 
             <button

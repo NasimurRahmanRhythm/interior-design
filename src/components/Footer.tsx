@@ -64,7 +64,7 @@ export default function Footer() {
 
       <div className="grid-w mt-10 border-t border-bone/15 pt-5">
         <span className="t-label col-span-3 opacity-50 lg:col-span-6">© 2026 {brand.name}</span>
-        <Link href="/#contact" className="t-label link-u col-span-3 w-fit justify-self-end lg:col-span-6">
+        <Link href="/contact" className="t-label link-u col-span-3 w-fit justify-self-end lg:col-span-6">
           Get a Quote
         </Link>
       </div>

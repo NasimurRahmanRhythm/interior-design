@@ -20,21 +20,22 @@ export const brand = {
 };
 
 export const nav = [
-  { label: "Services", href: "/#services" },
-  { label: "Work", href: "/#work" },
-  { label: "Journey", href: "/#journey" },
-  { label: "Clients", href: "/#clients" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Services", href: "/services" },
+  { label: "Projects", href: "/projects" },
+  { label: "About", href: "/about" },
+  { label: "Clients", href: "/clients" },
+  { label: "Process", href: "/process" },
+  { label: "Contact", href: "/contact" },
 ];
 
 /* ---------- Landing page ---------- */
 
 export const heroPanels = [
-  { image: "/images/work/airtel-yolo-fest.jpg", alt: "Yolo Fest stage for Airtel" },
-  { image: "/images/work/luxurious-cafe.jpg", alt: "Café interior with a teal wall and mural" },
-  { image: "/images/work/samsung-s9-launch.jpg", alt: "Samsung S9+ launch on stage" },
-  { image: "/images/work/modern-office.jpg", alt: "Law chamber waiting area and library" },
-  { image: "/images/work/bpl-opening-2024.jpg", alt: "BPL 2024 opening stage at the stadium" },
+  { image: "/images/projects/yolo-fest/1.jpg", alt: "Yolo Fest stage for Airtel" },
+  { image: "/images/projects/luxurious-cafe/1.jpg", alt: "Café interior with a teal wall and mural" },
+  { image: "/images/projects/samsung-s9-launch/1.jpg", alt: "Samsung S9+ launch on stage" },
+  { image: "/images/projects/modern-office-space/1.jpg", alt: "Law chamber waiting area and library" },
+  { image: "/images/projects/bpl-opening-2024/1.jpg", alt: "BPL 2024 opening stage at the stadium" },
 ];
 
 export const trust = [
@@ -54,9 +55,9 @@ export const journey: Milestone[] = [
   { year: "2015", title: "Dealer meets & PR", detail: "H Power dealer meets; Elite Paint covered by 20+ papers and 10 TV channels." },
   { year: "2016", title: "Design & print", detail: "Desk and wall calendars for 15 companies, Eid cards and gifts." },
   { year: "2019", title: "Police check post", detail: "Dhaka Tribune project, 2019–2020." },
-  { year: "2020", title: "Expos & ceremonies", detail: "Swiss-Bangladesh Expo and a Coca-Cola ceremony.", image: "/images/work/coca-cola-ceremony.jpg" },
-  { year: "2024", title: "BPL Opening", detail: "Stage, LED and event management at the stadium.", image: "/images/work/bpl-opening-2024.jpg" },
-  { year: "2025", title: "BPL LED scoreboard", detail: "Video display scoreboard, Mirpur Stadium.", image: "/images/work/bpl-led-2025.jpg" },
+  { year: "2020", title: "Expos & ceremonies", detail: "Swiss-Bangladesh Expo and a Coca-Cola ceremony.", image: "/images/projects/coca-cola-ceremony-2020/1.jpg" },
+  { year: "2024", title: "BPL Opening", detail: "Stage, LED and event management at the stadium.", image: "/images/projects/bpl-opening-2024/1.jpg" },
+  { year: "2025", title: "BPL LED scoreboard", detail: "Video display scoreboard, Mirpur Stadium.", image: "/images/projects/bpl-led-scoreboard-2025/1.jpg" },
   { year: "Today", title: "15+ years, 40+ people", detail: "A 100,000 sq ft workshop and four divisions under one roof." },
 ];
 
@@ -67,28 +68,28 @@ export const divisions: Division[] = [
     id: "events",
     title: "Events & Fairs",
     short: "Concerts, conferences, sports, launches and product activations.",
-    image: "/images/work/airtel-yolo-fest.jpg",
+    image: "/images/projects/yolo-fest/1.jpg",
     services: ["Corporate events & conferences", "Concerts & festivals", "Sports events", "Fair management", "Product activations", "Launches & dealer meets"],
   },
   {
     id: "exhibition",
     title: "Exhibition Stalls",
     short: "An extended arm of your business at every expo.",
-    image: "/images/work/stall-mozitor.jpg",
+    image: "/images/projects/expo-stalls-01/2.jpg",
     services: ["Concept & 3D design", "Fabrication", "Erection & branding", "On-site support", "Storage & logistics", "Dismantling"],
   },
   {
     id: "interior",
     title: "Interior & Architecture",
     short: "Offices, cafés, law chambers, facades and gates.",
-    image: "/images/work/luxurious-cafe.jpg",
+    image: "/images/projects/luxurious-cafe/1.jpg",
     services: ["Corporate & residential interiors", "Restaurants, cafés & retail", "Facades, gates & parking", "Custom furniture & cabinetry", "Acoustic panels", "Solar, water & fire safety"],
   },
   {
     id: "brand",
     title: "Brand, PR & Digital",
     short: "PR coverage, media, digital content, print and LED.",
-    image: "/images/work/samsung-s9-launch.jpg",
+    image: "/images/projects/samsung-s9-launch/1.jpg",
     services: ["Press & media relations", "Advertising & branding", "Media production", "Digital content", "Design & printing", "Promotional items & LED"],
   },
 ];
@@ -131,18 +132,17 @@ export const builds: { id: BuildKind; label: string; title: [string, string]; st
   },
 ];
 
-export type Work = { id: string; title: string; client: string; kind: string; year?: string; image: string };
-
-export const featuredWork: Work[] = [
-  { id: "bpl-led-2025", title: "BPL LED Scoreboard", client: "Mirpur Stadium", kind: "Sports", year: "2025", image: "/images/work/bpl-led-2025.jpg" },
-  { id: "wall-art", title: "Inspiring Wall Art", client: "Café interior", kind: "Interior", image: "/images/work/wall-art.jpg" },
-  { id: "yolo-fest", title: "Yolo Fest", client: "Airtel", kind: "Concert", image: "/images/work/airtel-yolo-fest.jpg" },
-  { id: "nexus-room", title: "Nexus Room", client: "Corporate office", kind: "Interior", image: "/images/work/nexus-room.jpg" },
-  { id: "mozitor-stall", title: "Expo Stall", client: "Mozitor Elevator", kind: "Exhibition", image: "/images/work/stall-mozitor.jpg" },
-  { id: "khadi-fest", title: "Tresemme Khadi Fest", client: "Unilever", kind: "Concert", image: "/images/work/tresemme-khadi-fest.jpg" },
-  { id: "olympia-bakery", title: "Olympia Bakery", client: "Banani branch", kind: "Interior", image: "/images/work/olympia-bakery.jpg" },
-  { id: "walton-carnival", title: "Colony Carnival", client: "Walton", kind: "Activation", image: "/images/work/walton-colony-carnival.jpg" },
-  { id: "samsung-s9", title: "S9+ Launch", client: "Samsung", kind: "Launch", image: "/images/work/samsung-s9-launch.jpg" },
+// Landing page "Selected Work", by project slug (see projects.ts).
+export const featuredWork = [
+  "bpl-led-scoreboard-2025",
+  "inspiring-wall-art",
+  "yolo-fest",
+  "nexus-room",
+  "expo-stalls-01",
+  "tresemme-khadi-fest",
+  "olympia-bakery",
+  "walton-colony-carnival",
+  "samsung-s9-launch",
 ];
 
 export const reach = {
@@ -189,164 +189,10 @@ export const quote = {
   timelines: ["As soon as possible", "1–3 months", "3–6 months", "6–12 months", "Flexible"],
 };
 
-/* ---------- Older inner pages (Spaces, Objects, Studio) — replaced in the next phase ---------- */
-
-export type Space = {
-  id: string;
-  name: string;
-  city: string;
-  year: string;
-  area: string;
-  type: string;
-  image: string;
-  blurb: string;
-};
-
-export const spaces: Space[] = [
-  {
-    id: "silent-room",
-    name: "Silent Room",
-    city: "Basel",
-    year: "2026",
-    area: "84 m²",
-    type: "Private residence",
-    image: "/images/spaces/1.jpg",
-    blurb: "A reading room cut from limewash and smoked oak, lit only from below the sill.",
-  },
-  {
-    id: "lower-hall",
-    name: "Lower Hall",
-    city: "Porto",
-    year: "2025",
-    area: "210 m²",
-    type: "Gallery apartment",
-    image: "/images/spaces/2.jpg",
-    blurb: "Two levels joined by a single cast stair. Nothing touches the perimeter walls.",
-  },
-  {
-    id: "north-study",
-    name: "North Study",
-    city: "Copenhagen",
-    year: "2025",
-    area: "46 m²",
-    type: "Work room",
-    image: "/images/spaces/3.jpg",
-    blurb: "North light, one table, and joinery that closes flush until it is needed.",
-  },
-  {
-    id: "ash-parlour",
-    name: "Ash Parlour",
-    city: "Kyoto",
-    year: "2024",
-    area: "62 m²",
-    type: "Tea house",
-    image: "/images/spaces/4.jpg",
-    blurb: "Charred cedar, paper, and a floor that steps down toward the garden.",
-  },
-  {
-    id: "clay-house",
-    name: "Clay House",
-    city: "Oaxaca",
-    year: "2024",
-    area: "320 m²",
-    type: "Family home",
-    image: "/images/spaces/5.jpg",
-    blurb: "Rammed earth rooms arranged around a court that is never fully in the sun.",
-  },
-  {
-    id: "long-table",
-    name: "Long Table",
-    city: "Milan",
-    year: "2023",
-    area: "38 m²",
-    type: "Dining room",
-    image: "/images/spaces/6.jpg",
-    blurb: "One table for ten, a round mirror, and green velvet. The kitchen is elsewhere.",
-  },
-  {
-    id: "interior-vii",
-    name: "Interior VII",
-    city: "Undisclosed",
-    year: "Forming",
-    area: "—",
-    type: "In formation",
-    image: "/images/spaces/7.jpg",
-    blurb: "Currently forming. Its location is shared with those already inside.",
-  },
-];
-
-export type ObjectItem = {
-  id: string;
-  numeral: string;
-  name: string;
-  origin: string;
-  material: string;
-  edition: string;
-  image: string;
-};
-
-export const objects: ObjectItem[] = [
-  {
-    id: "fox-stool",
-    numeral: "I",
-    name: "The Fox Stool",
-    origin: "Silent Room",
-    material: "Smoked oak, wax",
-    edition: "Edition of 40",
-    image: "/images/objects/1.jpg",
-  },
-  {
-    id: "low-lamp",
-    numeral: "II",
-    name: "Low Lamp",
-    origin: "North Study",
-    material: "Spun brass, linen",
-    edition: "Edition of 25",
-    image: "/images/objects/2.jpg",
-  },
-  {
-    id: "ash-vessel",
-    numeral: "III",
-    name: "Ash Vessel",
-    origin: "Ash Parlour",
-    material: "Wood-fired stoneware",
-    edition: "Unique pieces",
-    image: "/images/objects/3.jpg",
-  },
-  {
-    id: "court-chair",
-    numeral: "IV",
-    name: "Court Chair",
-    origin: "Clay House",
-    material: "Ash, woven cord",
-    edition: "Edition of 60",
-    image: "/images/objects/4.jpg",
-  },
-];
-
-export const people = [
-  { name: "Ines Varga", role: "Founding designer", image: "/images/people/1.jpg" },
-  { name: "Tomas Reyl", role: "Joinery & making", image: "/images/people/2.jpg" },
-  { name: "Mara Okonjo", role: "Light & material", image: "/images/people/3.jpg" },
-  { name: "Elias Brandt", role: "3D & visualisation", image: "/images/people/4.jpg" },
-];
-
-export const roomSteps = [
-  { title: "Shell", text: "We begin with the volume alone: floor, two walls, and where the light enters." },
-  { title: "Ground", text: "A rug and a low table fix the centre. Everything else is measured from here." },
-  { title: "Furnish", text: "Seating, storage and a single shelf arrive only once the room asks for them." },
-  { title: "Light", text: "Lamps come last. The room is finished when it reads well in the dark." },
-];
+/* ---------- 3D room finishes ---------- */
 
 export const finishes = [
   { name: "Smoked Oak", floor: "#6b4a34", wall: "#e6dccb", accent: "#7b5136", fabric: "#c9bca6" },
   { name: "Sage Lime", floor: "#8a8f7c", wall: "#dfe3d6", accent: "#5f6f5b", fabric: "#f1eade" },
   { name: "Obsidian", floor: "#2b2829", wall: "#4a4347", accent: "#ff5113", fabric: "#8c8279" },
-];
-
-export const stats = [
-  { value: "7", label: "Spaces in operation" },
-  { value: "4", label: "Objects in circulation" },
-  { value: "12", label: "People, no more" },
-  { value: "0", label: "Social accounts" },
 ];
