@@ -16,8 +16,8 @@ const BUILT: Record<Exclude<SceneKind, "brand">, number> = { stage: 0.97, stall:
 
 export default function DivisionScene({ kind, className }: { kind: SceneKind; className?: string }) {
   const progress = useRef(kind === "brand" ? 1 : BUILT[kind]);
-  if (kind === "stage") return <StageScene progress={progress} className={className} />;
-  if (kind === "stall") return <StallScene progress={progress} className={className} />;
+  if (kind === "stage") return <StageScene progress={progress} finish={finishes[0]} className={className} />;
+  if (kind === "stall") return <StallScene progress={progress} finish={finishes[0]} className={className} />;
   if (kind === "room") return <RoomScene progress={progress} finish={finishes[0]} className={className} />;
   return <BrandScene className={className} />;
 }

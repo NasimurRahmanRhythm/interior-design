@@ -120,7 +120,7 @@ export default function Divisions() {
             </div>
           </div>
 
-          <div className="grid-w items-end pb-8">
+          <div className="grid-w items-end pb-8 pt-6 lg:pt-10">
             <div className="col-span-6 min-h-[4.5rem] lg:col-span-8">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.ul

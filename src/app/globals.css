@@ -8,6 +8,8 @@
   --color-umber: #7b5136;
   --color-sage: #9faf9b;
   --color-ember: #ff5113;
+  /* The green of the logo; used only where the brand mark itself appears. */
+  --color-leaf: #39b54a;
 
   --font-display: var(--font-bodoni), "Didot", "Bodoni MT", serif;
   --font-serif: var(--font-instrument), "Times New Roman", serif;

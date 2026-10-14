@@ -24,6 +24,7 @@ export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind 
   const [kind, setKind] = useState<BuildKind>(initial);
   const [step, setStep] = useState(0);
   const [night, setNight] = useState(false);
+  const [finish, setFinish] = useState(0);
   const starts = useRef(STEP_STARTS[initial]);
   const build = builds.find((b) => b.id === kind)!;
 
@@ -74,9 +75,9 @@ export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind 
     <section ref={root} data-theme={night ? "dark" : "light"} className="relative bg-bone">
       <div className="build-track relative h-[460vh]">
         <div className="build-stage sticky top-0 h-svh overflow-hidden bg-bone text-ink">
-          {kind === "stall" && <StallScene progress={progress} className={SCENE_CLASS} />}
-          {kind === "office" && <RoomScene progress={progress} finish={finishes[0]} className={SCENE_CLASS} />}
-          {kind === "stage" && <StageScene progress={progress} className={SCENE_CLASS} />}
+          {kind === "stall" && <StallScene progress={progress} finish={finishes[finish]} className={SCENE_CLASS} />}
+          {kind === "office" && <RoomScene progress={progress} finish={finishes[finish]} className={SCENE_CLASS} />}
+          {kind === "stage" && <StageScene progress={progress} finish={finishes[finish]} className={SCENE_CLASS} />}
 
           <div className="grid-w pointer-events-none absolute inset-0 content-end pb-8 lg:content-center lg:pb-0">
             <div className="pointer-events-auto col-span-6 lg:col-span-4">
@@ -128,6 +129,24 @@ export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind 
                     data-tone={night ? "dark" : "light"}
                   >
                     <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <p className="t-label mb-2 mt-5 opacity-60">Finish</p>
+              <div className="flex flex-wrap gap-2" aria-label="Choose a finish">
+                {finishes.map((item, i) => (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => setFinish(i)}
+                    aria-pressed={i === finish}
+                    className={`flex items-center gap-2 border px-3 py-2 t-label transition-colors duration-500 ${
+                      i === finish ? "border-current" : "border-current/20 hover:border-current/60"
+                    }`}
+                  >
+                    <span className="h-3 w-3 rounded-full border border-current/30" style={{ background: item.floor }} />
+                    {item.name}
                   </button>
                 ))}
               </div>

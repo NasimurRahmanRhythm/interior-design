@@ -6,11 +6,10 @@ import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import SceneCanvas from "./SceneCanvas";
 import { DayLight, Mat, Piece, reveal, useOrbitCamera, type Progress, type Vec3 } from "./build";
+import type { Finish } from "./RoomScene";
 
 const C = {
-  ground: "#d9cfbf",
   deck: "#151415",
-  wall: "#f1eade",
   stone: "#3f383c",
   umber: "#7b5136",
   sand: "#c9a07f",
@@ -85,7 +84,7 @@ function Beam({ at, progress, x, phase }: { at: number; progress: Progress; x: n
   );
 }
 
-function Stage({ progress }: { progress: Progress }) {
+function Stage({ progress, finish }: { progress: Progress; finish: Finish }) {
   const stage = useRef<THREE.Group>(null);
   const led = useRef<THREE.MeshStandardMaterial>(null);
   const wash = useRef<THREE.PointLight>(null);
@@ -121,7 +120,7 @@ function Stage({ progress }: { progress: Progress }) {
         <Piece at={0} progress={progress}>
           <mesh position={[0, -0.08, 0]} receiveShadow>
             <boxGeometry args={[8.4, 0.16, 7.6]} />
-            <Mat color={C.ground} roughness={0.9} />
+            <Mat color={finish.wall} roughness={0.9} />
           </mesh>
         </Piece>
         <Piece at={0.06} progress={progress} position={[0, 0, -1.7]}>
@@ -131,7 +130,7 @@ function Stage({ progress }: { progress: Progress }) {
           </mesh>
           <mesh position={[0, DECK_Y / 2, 1.31]}>
             <boxGeometry args={[6.4, 0.08, 0.02]} />
-            <Mat color={C.sand} />
+            <Mat color={finish.accent} />
           </mesh>
         </Piece>
         <Piece at={0.12} progress={progress} position={[0, 0, -0.2]}>
@@ -147,11 +146,11 @@ function Stage({ progress }: { progress: Progress }) {
             <group key={i} position={c}>
               <mesh position={[0, 0.24, 0]} castShadow>
                 <boxGeometry args={[0.46, 0.06, 0.42]} />
-                <Mat color={C.umber} roughness={0.9} />
+                <Mat color={finish.accent} roughness={0.9} />
               </mesh>
               <mesh position={[0, 0.5, 0.19]} castShadow>
                 <boxGeometry args={[0.46, 0.5, 0.05]} />
-                <Mat color={C.umber} roughness={0.9} />
+                <Mat color={finish.accent} roughness={0.9} />
               </mesh>
             </group>
           ))}
@@ -224,10 +223,10 @@ function Stage({ progress }: { progress: Progress }) {
   );
 }
 
-export default function StageScene({ progress, className }: { progress: Progress; className?: string }) {
+export default function StageScene({ progress, finish, className }: { progress: Progress; finish: Finish; className?: string }) {
   return (
     <SceneCanvas className={className} shadows camera={{ position: [11, 7, 12], fov: 36 }} gl={{ antialias: true, alpha: true }}>
-      <Stage progress={progress} />
+      <Stage progress={progress} finish={finish} />
     </SceneCanvas>
   );
 }

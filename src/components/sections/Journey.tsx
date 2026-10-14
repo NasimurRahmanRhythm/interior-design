@@ -126,9 +126,9 @@ export default function Journey() {
                   ref={trail}
                   d={spiral.d}
                   fill="none"
-                  stroke="currentColor"
-                  strokeOpacity="0.55"
-                  strokeWidth="1.6"
+                  stroke="var(--color-leaf)"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
                   strokeDasharray={`${spiral.total} ${spiral.total}`}
                   strokeDashoffset={spiral.total}
                 />
@@ -150,8 +150,8 @@ export default function Journey() {
                         cy={y}
                         r={on ? 8 : 4.5}
                         className="transition-all duration-500"
-                        fill={on || done ? "currentColor" : "#ece4d6"}
-                        stroke="currentColor"
+                        fill={on || done ? "var(--color-leaf)" : "#ece4d6"}
+                        stroke={on || done ? "var(--color-leaf)" : "currentColor"}
                       />
                       <g className="hidden sm:inline">
                         <text
@@ -171,9 +171,9 @@ export default function Journey() {
                 })}
 
                 <g ref={dot}>
-                  <circle r="20" fill="none" stroke="currentColor" strokeOpacity="0.25" />
-                  <circle r="34" fill="none" stroke="currentColor" strokeOpacity="0.1" />
-                  <circle r="6" fill="currentColor" />
+                  <circle r="20" fill="none" stroke="var(--color-leaf)" strokeOpacity="0.45" />
+                  <circle r="34" fill="none" stroke="var(--color-leaf)" strokeOpacity="0.2" />
+                  <circle r="6" fill="var(--color-leaf)" />
                 </g>
               </svg>
             </div>

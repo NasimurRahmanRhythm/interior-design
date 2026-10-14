@@ -6,10 +6,10 @@ import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import SceneCanvas from "./SceneCanvas";
 import { DayLight, Mat, Piece, reveal, useOrbitCamera, type Progress, type Vec3 } from "./build";
+import type { Finish } from "./RoomScene";
 
 const C = {
   floor: "#d9cfbf",
-  carpet: "#7b5136",
   wall: "#f1eade",
   ink: "#151415",
   stone: "#3f383c",
@@ -57,7 +57,7 @@ function Spot({ at, progress, position, aim }: { at: number; progress: Progress;
   );
 }
 
-function Stall({ progress }: { progress: Progress }) {
+function Stall({ progress, finish }: { progress: Progress; finish: Finish }) {
   const stall = useRef<THREE.Group>(null);
   const screen = useRef<THREE.MeshStandardMaterial>(null);
   const { clock } = useThree();
@@ -95,19 +95,19 @@ function Stall({ progress }: { progress: Progress }) {
           </mesh>
           <mesh position={[0.2, 0.005, 0.2]} receiveShadow>
             <boxGeometry args={[5.4, 0.02, 5.4]} />
-            <Mat color={C.carpet} roughness={1} />
+            <Mat color={finish.floor} roughness={1} />
           </mesh>
         </Piece>
         <Piece at={0.05} progress={progress}>
           <mesh position={[0, 1.5, -2.95]} receiveShadow castShadow>
             <boxGeometry args={[6, 3, 0.1]} />
-            <Mat color={C.wall} />
+            <Mat color={finish.wall} />
           </mesh>
         </Piece>
         <Piece at={0.1} progress={progress}>
           <mesh position={[-2.95, 1.5, -0.6]} receiveShadow castShadow>
             <boxGeometry args={[0.1, 3, 4.8]} />
-            <Mat color={C.wall} />
+            <Mat color={finish.wall} />
           </mesh>
         </Piece>
 
@@ -118,11 +118,11 @@ function Stall({ progress }: { progress: Progress }) {
           </RoundedBox>
           <mesh position={[0, 1.07, 0]} castShadow>
             <boxGeometry args={[2.1, 0.06, 0.8]} />
-            <Mat color={C.sand} roughness={0.4} />
+            <Mat color={finish.fabric} roughness={0.4} />
           </mesh>
           <mesh position={[0, 0.55, 0.36]}>
             <boxGeometry args={[1.6, 0.5, 0.02]} />
-            <Mat color={C.umber} roughness={0.6} />
+            <Mat color={finish.accent} roughness={0.6} />
           </mesh>
         </Piece>
         <Piece at={0.33} progress={progress} position={[-2.88, 1.7, -1.6]}>
@@ -140,7 +140,7 @@ function Stall({ progress }: { progress: Progress }) {
             <group key={x} position={[x, 0, 0]}>
               <mesh position={[0, 0.45 + i * 0.12, 0]} castShadow receiveShadow>
                 <boxGeometry args={[0.5, 0.9 + i * 0.24, 0.5]} />
-                <Mat color={C.wall} roughness={0.6} />
+                <Mat color={finish.fabric} roughness={0.6} />
               </mesh>
               <mesh position={[0, 1.02 + i * 0.24, 0]} castShadow>
                 {i === 1 ? <sphereGeometry args={[0.16, 24, 16]} /> : <boxGeometry args={[0.24, 0.3, 0.24]} />}
@@ -152,7 +152,7 @@ function Stall({ progress }: { progress: Progress }) {
         <Piece at={0.43} progress={progress} position={[1.3, 0, 0.9]}>
           <mesh position={[0, 0.72, 0]} castShadow receiveShadow>
             <cylinderGeometry args={[0.5, 0.5, 0.05, 40]} />
-            <Mat color={C.wall} roughness={0.5} />
+            <Mat color={finish.fabric} roughness={0.5} />
           </mesh>
           <mesh position={[0, 0.36, 0]} castShadow>
             <cylinderGeometry args={[0.05, 0.18, 0.72, 16]} />
@@ -161,7 +161,7 @@ function Stall({ progress }: { progress: Progress }) {
           {[0, 2.1, 4.2].map((a) => (
             <mesh key={a} position={[Math.cos(a) * 0.85, 0.24, Math.sin(a) * 0.85]} castShadow>
               <cylinderGeometry args={[0.2, 0.2, 0.48, 24]} />
-              <Mat color={C.umber} roughness={0.9} />
+              <Mat color={finish.accent} roughness={0.9} />
             </mesh>
           ))}
         </Piece>
@@ -180,11 +180,11 @@ function Stall({ progress }: { progress: Progress }) {
         <Piece at={0.57} progress={progress} position={[2.55, 0, 2.4]}>
           <mesh position={[0, 1.9, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.6, 3.8, 0.6]} />
-            <Mat color={C.umber} roughness={0.6} />
+            <Mat color={finish.accent} roughness={0.6} />
           </mesh>
           <mesh position={[0, 3.1, 0.31]}>
             <boxGeometry args={[0.44, 0.9, 0.02]} />
-            <Mat color={C.wall} />
+            <Mat color={finish.wall} />
           </mesh>
         </Piece>
         <Piece at={0.62} progress={progress} position={[-0.6, 1.3, -2.88]}>
@@ -238,10 +238,10 @@ function Stall({ progress }: { progress: Progress }) {
   );
 }
 
-export default function StallScene({ progress, className }: { progress: Progress; className?: string }) {
+export default function StallScene({ progress, finish, className }: { progress: Progress; finish: Finish; className?: string }) {
   return (
     <SceneCanvas className={className} shadows camera={{ position: [10, 7.5, 10], fov: 36 }} gl={{ antialias: true, alpha: true }}>
-      <Stall progress={progress} />
+      <Stall progress={progress} finish={finish} />
     </SceneCanvas>
   );
 }
