@@ -4,9 +4,9 @@ import { useRef } from "react";
 import RevealText from "../RevealText";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { BD_PATH, BD_VIEWBOX, project } from "@/lib/bangladesh";
-import { reach } from "@/lib/data";
+import type { Copy, Settings } from "@/lib/db/types";
 
-export default function Reach() {
+export default function Reach({ reach, copy }: { reach: Settings["reach"]; copy: Copy }) {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -28,7 +28,7 @@ export default function Reach() {
     <section ref={root} data-theme="light" className="overflow-hidden bg-bone py-24 text-ink lg:py-36">
       <div className="grid-w items-center gap-y-14">
         <div className="col-span-6 lg:col-span-5 lg:col-start-1">
-          <p className="t-label mb-6 opacity-60">Across the country</p>
+          <p className="t-label mb-6 opacity-60">{copy.eyebrow}</p>
           {reach.figures.map((f, i) => (
             <div key={f.unit} className={i ? "mt-8" : ""}>
               <p className="flex items-baseline gap-4">
@@ -83,7 +83,7 @@ export default function Reach() {
               );
             })}
           </svg>
-          <p className="t-label mt-4 text-center opacity-50">Pins mark venues named in our project records</p>
+          <p className="t-label mt-4 text-center opacity-50">{copy.note}</p>
         </div>
       </div>
     </section>

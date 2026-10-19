@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { builds, finishes, type BuildKind } from "@/lib/data";
+import type { Build, BuildKind, Copy, Finish } from "@/lib/db/types";
 
 const RoomScene = dynamic(() => import("../three/RoomScene"), { ssr: false });
 const StallScene = dynamic(() => import("../three/StallScene"), { ssr: false });
@@ -18,7 +18,9 @@ const STEP_STARTS: Record<BuildKind, number[]> = {
 
 const SCENE_CLASS = "absolute inset-x-0 top-[9svh] h-[50svh] lg:inset-y-0 lg:left-[34%] lg:right-0 lg:top-0 lg:h-auto";
 
-export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind }) {
+type Props = { builds: Build[]; finishes: Finish[]; copy: Copy; initial?: BuildKind };
+
+export default function BuildStudy({ builds, finishes, copy, initial = "stall" }: Props) {
   const root = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const [kind, setKind] = useState<BuildKind>(initial);
@@ -81,7 +83,7 @@ export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind 
 
           <div className="grid-w pointer-events-none absolute inset-0 content-end pb-8 lg:content-center lg:pb-0">
             <div className="pointer-events-auto col-span-6 lg:col-span-4">
-              <p className="t-label mb-4 opacity-60">3D Study — Scroll to build, drag to rotate</p>
+              <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
               <h2 className="t-h1">
                 {build.title[0]}
                 <br />
@@ -133,7 +135,7 @@ export default function BuildStudy({ initial = "stall" }: { initial?: BuildKind 
                 ))}
               </div>
 
-              <p className="t-label mb-2 mt-5 opacity-60">Finish</p>
+              <p className="t-label mb-2 mt-5 opacity-60">{copy.finish_label}</p>
               <div className="flex flex-wrap gap-2" aria-label="Choose a finish">
                 {finishes.map((item, i) => (
                   <button

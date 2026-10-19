@@ -7,36 +7,36 @@ import SplitTitle from "@/components/SplitTitle";
 import Contact from "@/components/sections/Contact";
 import Process from "@/components/sections/Process";
 import DivisionScene from "@/components/three/DivisionScene";
-import { divisionPages, getDivisionPage } from "@/lib/pages";
-import { projectsIn } from "@/lib/projects";
-import { quote } from "@/lib/data";
+import { fill } from "@/lib/db/fill";
+import { getContent, getCopy, getDivisions, getProjects, getSettings } from "@/lib/db/queries";
 
 type Params = { params: Promise<{ slug: string }> };
 
-// The quote form's division choice for each page, in the same order as divisionPages.
-const QUOTE_LABEL: Record<string, string> = {
-  events: quote.divisions[0],
-  exhibition: quote.divisions[1],
-  interior: quote.divisions[2],
-  brand: quote.divisions[3],
-};
-
-export function generateStaticParams() {
-  return divisionPages.map((d) => ({ slug: d.id }));
-}
-
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const page = getDivisionPage((await params).slug);
-  return page ? { title: `${page.name} — Integrity 360 Degree`, description: page.intro } : {};
+  const { slug } = await params;
+  const [divisions, settings] = await Promise.all([getDivisions(), getSettings()]);
+  const page = divisions.find((d) => d.id === slug);
+  return page ? { title: `${page.name} — ${settings.brand.name}`, description: page.intro } : {};
 }
 
 export default async function DivisionPage({ params }: Params) {
-  const page = getDivisionPage((await params).slug);
-  if (!page) notFound();
+  const { slug } = await params;
+  const [settings, copy, home, content, divisions, projects] = await Promise.all([
+    getSettings(),
+    getCopy("division"),
+    getCopy("home"),
+    getContent(),
+    getDivisions(),
+    getProjects(),
+  ]);
+  const index = divisions.findIndex((d) => d.id === slug);
+  if (index < 0) notFound();
+  const page = divisions[index];
+  const text = copy.page;
 
-  const all = projectsIn(page.id);
+  const all = projects.filter((p) => p.division === page.id);
   const work = [...all.filter((p) => p.featured), ...all.filter((p) => !p.featured)].slice(0, 6);
-  const others = divisionPages.filter((d) => d.id !== page.id);
+  const others = divisions.filter((d) => d.id !== page.id);
 
   return (
     <>
@@ -46,12 +46,12 @@ export default async function DivisionPage({ params }: Params) {
             className="absolute inset-0"
             style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(123,81,54,0.24), transparent 60%)" }}
           />
-          <DivisionScene kind={page.scene} className="absolute inset-x-0 top-[12svh] h-[46svh] lg:inset-y-0 lg:left-[46%] lg:right-0 lg:top-0 lg:h-auto" />
+          <DivisionScene kind={page.scene} finish={content.finishes[0]} className="absolute inset-x-0 top-[12svh] h-[46svh] lg:inset-y-0 lg:left-[46%] lg:right-0 lg:top-0 lg:h-auto" />
 
           <div className="grid-w pointer-events-none relative min-h-svh content-end pb-10 pt-[62svh] lg:content-center lg:pb-0 lg:pt-28">
             <div className="pointer-events-auto col-span-6 lg:col-span-5">
               <p className="t-label mb-4 opacity-60">
-                Division {page.number} — drag to turn
+                {fill(text.eyebrow, { number: page.number })}
               </p>
               <h1 className="flex flex-col font-display text-[clamp(3.2rem,6.6vw,7rem)] leading-[0.9] tracking-[-0.035em]">
                 <SplitTitle text={page.title[0]} when="ready" />
@@ -61,10 +61,10 @@ export default async function DivisionPage({ params }: Params) {
               <RevealText className="mt-4 max-w-md text-sm leading-relaxed opacity-75">{page.intro}</RevealText>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button href="#contact" big>
-                  Get a Quote
+                  {text.cta}
                 </Button>
                 <Button href={`/projects?division=${page.id}`} big>
-                  See projects
+                  {text.projects_cta}
                 </Button>
               </div>
             </div>
@@ -86,8 +86,8 @@ export default async function DivisionPage({ params }: Params) {
       <section data-theme="light" className="bg-[#ece4d6] py-24 text-ink lg:py-36">
         <div className="grid-w gap-y-14">
           <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-12">
-            <SplitTitle text="What we" className="t-lrg" />
-            <SplitTitle text="do" className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={text.what_title[0]} className="t-lrg" />
+            <SplitTitle text={text.what_title[1]} className="t-lrg font-serif italic" delay={0.1} />
           </h2>
           {page.groups.map((g, i) => (
             <div key={g.title} className="col-span-6 border-t border-ink/20 pt-6 sm:col-span-3 lg:col-span-4">
@@ -121,11 +121,11 @@ export default async function DivisionPage({ params }: Params) {
       <section data-theme="dark" className="bg-ink py-24 text-bone lg:py-36">
         <div className="grid-w items-end gap-y-6">
           <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-9">
-            <SplitTitle text="Selected" className="t-lrg" />
-            <SplitTitle text="projects" className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={text.projects_title[0]} className="t-lrg" />
+            <SplitTitle text={text.projects_title[1]} className="t-lrg font-serif italic" delay={0.1} />
           </h2>
           <div className="col-span-6 lg:col-span-3 lg:justify-self-end">
-            <Button href={`/projects?division=${page.id}`}>All {all.length} projects</Button>
+            <Button href={`/projects?division=${page.id}`}>{fill(text.all_projects, { count: all.length })}</Button>
           </div>
         </div>
         <div className="grid-w mt-14 gap-y-14 lg:mt-20">
@@ -140,11 +140,11 @@ export default async function DivisionPage({ params }: Params) {
         </div>
       </section>
 
-      <Process />
+      <Process steps={content.processSteps} copy={home.process} />
 
       <section data-theme="light" className="bg-[#ece4d6] py-16 text-ink">
         <div className="grid-w items-center gap-y-6">
-          <p className="t-label col-span-6 opacity-60 lg:col-span-3">Other divisions</p>
+          <p className="t-label col-span-6 opacity-60 lg:col-span-3">{text.others}</p>
           <ul className="col-span-6 flex flex-col gap-2 lg:col-span-9 lg:flex-row lg:justify-end lg:gap-[var(--gap)]">
             {others.map((d) => (
               <li key={d.id}>
@@ -155,7 +155,8 @@ export default async function DivisionPage({ params }: Params) {
         </div>
       </section>
 
-      <Contact division={QUOTE_LABEL[page.id]} />
+      {/* The quote form lists the divisions in the same order as the divisions table. */}
+      <Contact contact={settings.contact} quote={settings.quote} copy={home.contact} division={settings.quote.divisions[index]} />
     </>
   );
 }

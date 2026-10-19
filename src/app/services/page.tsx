@@ -5,31 +5,33 @@ import PageHero from "@/components/PageHero";
 import Contact from "@/components/sections/Contact";
 import Divisions from "@/components/sections/Divisions";
 import Process from "@/components/sections/Process";
-import { divisions } from "@/lib/data";
-import { divisionPages } from "@/lib/pages";
-import { projectsIn } from "@/lib/projects";
+import { getContent, getCopy, getDivisions, getProjects, getSettings } from "@/lib/db/queries";
 
-export const metadata: Metadata = {
-  title: "Services — Integrity 360 Degree",
-  description: "Four divisions under one roof: events and fairs, exhibition stalls, interior and architecture, and brand, PR and digital.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getCopy("services");
+  return { title: meta.title, description: meta.description };
+}
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const [settings, copy, home, content, divisions, projects] = await Promise.all([
+    getSettings(),
+    getCopy("services"),
+    getCopy("home"),
+    getContent(),
+    getDivisions(),
+    getProjects(),
+  ]);
+
   return (
     <>
-      <PageHero
-        title="Services"
-        accent="360°"
-        label="Four divisions · One partner"
-        text="Events, exhibitions, spaces and the brand around them — planned, built and run by one team with its own workshop."
-      />
+      <PageHero title={copy.hero.title} accent={copy.hero.accent} label={copy.hero.label} text={copy.hero.text} />
 
-      <Divisions />
+      <Divisions divisions={divisions} copy={home.divisions} />
 
       <section data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
         <ul className="grid-w gap-y-0">
-          {divisionPages.map((page) => {
-            const card = divisions.find((d) => d.id === page.id)!;
+          {divisions.map((page) => {
+            const count = projects.filter((p) => p.division === page.id).length;
             return (
               <li key={page.id} className="col-span-6 border-t border-ink/20 lg:col-span-12">
                 <Link href={`/services/${page.id}`} className="group grid grid-cols-6 items-center gap-x-[var(--gap)] gap-y-6 py-10 lg:grid-cols-12 lg:py-14">
@@ -40,12 +42,14 @@ export default function ServicesPage() {
                     </h2>
                     <p className="mt-4 max-w-md text-sm leading-relaxed opacity-70">{page.intro}</p>
                     <p className="t-label mt-6">
-                      <span className="link-u">{projectsIn(page.id).length} projects — explore →</span>
+                      <span className="link-u">
+                        {count} {copy.list.explore}
+                      </span>
                     </p>
                   </div>
                   <div className="fit col-span-6 aspect-[16/10] lg:col-span-5 lg:col-start-8">
                     <Image
-                      src={card.image}
+                      src={page.card.image}
                       alt=""
                       fill
                       sizes="(min-width:1024px) 40vw, 100vw"
@@ -59,8 +63,8 @@ export default function ServicesPage() {
         </ul>
       </section>
 
-      <Process />
-      <Contact />
+      <Process steps={content.processSteps} copy={home.process} />
+      <Contact contact={settings.contact} quote={settings.quote} copy={home.contact} />
     </>
   );
 }

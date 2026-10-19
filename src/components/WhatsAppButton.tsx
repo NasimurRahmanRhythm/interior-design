@@ -1,10 +1,8 @@
-import { brand } from "@/lib/data";
-
 // Sticky chat button, bottom right on every page.
-export default function WhatsAppButton() {
+export default function WhatsAppButton({ number }: { number: string }) {
   return (
     <a
-      href={`https://wa.me/${brand.whatsapp}`}
+      href={`https://wa.me/${number}`}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat with us on WhatsApp"

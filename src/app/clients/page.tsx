@@ -4,35 +4,43 @@ import PageHero from "@/components/PageHero";
 import ProjectCard from "@/components/ProjectCard";
 import SplitTitle from "@/components/SplitTitle";
 import Clients from "@/components/sections/Clients";
-import { clientGroups } from "@/lib/pages";
-import { getProject, type Project } from "@/lib/projects";
+import { fill } from "@/lib/db/fill";
+import { getClientGroups, getCopy, getMarquee, getProjects } from "@/lib/db/queries";
+import type { Project } from "@/lib/db/types";
 
-export const metadata: Metadata = {
-  title: "Clients — Integrity 360 Degree",
-  description: "Banks, pharma, FMCG, telecom, automotive, development agencies and universities we have worked with since 2010.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getCopy("clients");
+  return { title: meta.title, description: meta.description };
+}
 
-// Programmes run for the same client more than once.
-const repeat = ["big-bangla-run-2015", "shahjalal-branch-openings", "national-premix-summit"]
-  .map((slug) => getProject(slug))
-  .filter((p): p is Project => Boolean(p));
+export default async function ClientsPage() {
+  const [copy, home, groups, marquee, projects] = await Promise.all([
+    getCopy("clients"),
+    getCopy("home"),
+    getClientGroups(),
+    getMarquee(),
+    getProjects(),
+  ]);
+  const total = groups.reduce((n, g) => n + g.names.length, 0);
+  // Programmes run for the same client more than once.
+  const repeat = (copy.repeat.projects as string[])
+    .map((slug) => projects.find((p) => p.slug === slug))
+    .filter((p): p is Project => Boolean(p));
 
-export default function ClientsPage() {
-  const total = clientGroups.reduce((n, g) => n + g.names.length, 0);
   return (
     <>
       <PageHero
-        title="Clients"
-        accent="& partners"
-        label={`${total}+ names from our profiles`}
-        text="Multinationals, banks, pharma, telecom and development partners — many of them for more than one programme."
+        title={copy.hero.title}
+        accent={copy.hero.accent}
+        label={fill(copy.hero.label, { count: total })}
+        text={copy.hero.text}
       />
 
-      <Clients />
+      <Clients rows={marquee} copy={home.clients} />
 
       <section data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
         <div className="grid-w gap-y-14">
-          {clientGroups.map((g) => (
+          {groups.map((g) => (
             <div key={g.title} className="col-span-6 border-t border-ink/20 pt-6 sm:col-span-3 lg:col-span-4">
               <h2 className="t-h3">{g.title}</h2>
               <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
@@ -44,19 +52,17 @@ export default function ClientsPage() {
               </ul>
             </div>
           ))}
-          <p className="t-label col-span-6 opacity-50 lg:col-span-12">Logos are shown only with each client&rsquo;s permission.</p>
+          <p className="t-label col-span-6 opacity-50 lg:col-span-12">{copy.list.note}</p>
         </div>
       </section>
 
       <section data-theme="dark" className="bg-ink py-24 text-bone lg:py-36">
         <div className="grid-w items-end gap-y-6">
           <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-9">
-            <SplitTitle text="Clients who" className="t-lrg" />
-            <SplitTitle text="came back" className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={copy.repeat.title[0]} className="t-lrg" />
+            <SplitTitle text={copy.repeat.title[1]} className="t-lrg font-serif italic" delay={0.1} />
           </h2>
-          <p className="col-span-6 text-sm opacity-70 lg:col-span-3">
-            Novo Nordisk trusted us with marathons, summits, roadshows and their PR; Shahjalal Islami Bank with AGMs, conferences and 23 branch openings.
-          </p>
+          <p className="col-span-6 text-sm opacity-70 lg:col-span-3">{copy.repeat.text}</p>
         </div>
         <div className="grid-w mt-14 gap-y-14">
           {repeat.map((p) => (
@@ -64,8 +70,8 @@ export default function ClientsPage() {
           ))}
         </div>
         <div className="mt-16 flex justify-center">
-          <Button href="/projects" big>
-            All projects
+          <Button href={copy.repeat.cta.href} big>
+            {copy.repeat.cta.label}
           </Button>
         </div>
       </section>

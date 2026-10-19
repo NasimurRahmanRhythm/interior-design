@@ -6,13 +6,16 @@ import Button from "../Button";
 import SplitTitle from "../SplitTitle";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { onReady } from "@/lib/ready";
-import { brand, heroPanels } from "@/lib/data";
+import type { Copy, Settings } from "@/lib/db/types";
 
 const HeroPanels = dynamic(() => import("../three/HeroPanels"), { ssr: false });
 
 const LINE = "block font-display text-[clamp(3.6rem,9.4vw,10rem)] leading-[0.86] tracking-[-0.04em]";
 
-export default function Hero() {
+type Props = { belief: string; panels: Settings["heroPanels"]; copy: Copy };
+
+export default function Hero({ belief, panels, copy }: Props) {
+  const lines: string[] = copy.lines;
   const root = useRef<HTMLElement>(null);
   const progress = useRef(0);
 
@@ -51,38 +54,38 @@ export default function Hero() {
           style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(123,81,54,0.26), transparent 60%)" }}
         />
 
-        <HeroPanels panels={heroPanels} progress={progress} className="pointer-events-none absolute inset-0" />
+        <HeroPanels panels={panels} progress={progress} className="pointer-events-none absolute inset-0" />
 
         <h1 className="pointer-events-none absolute inset-x-0 bottom-[22svh] z-10 px-[var(--margin)] lg:bottom-auto lg:top-[22svh]">
           <span className="hero-l1 block">
-            <SplitTitle text="One Team" className={LINE} when="ready" />
+            <SplitTitle text={lines[0]} className={LINE} when="ready" />
           </span>
           <span className="hero-l2 ml-[0.5em] block lg:ml-[1.1em]">
-            <SplitTitle text="for your Brand," className={`${LINE} font-serif italic`} when="ready" delay={0.1} />
+            <SplitTitle text={lines[1]} className={`${LINE} font-serif italic`} when="ready" delay={0.1} />
           </span>
           <span className="hero-l3 block">
-            <SplitTitle text="Events &" className={LINE} when="ready" delay={0.2} />
+            <SplitTitle text={lines[2]} className={LINE} when="ready" delay={0.2} />
           </span>
           <span className="hero-l4 ml-[0.6em] block">
-            <SplitTitle text="Spaces" className={LINE} when="ready" delay={0.3} />
+            <SplitTitle text={lines[3]} className={LINE} when="ready" delay={0.3} />
           </span>
         </h1>
 
         <div className="hero-meta absolute inset-0 z-10">
           <div className="hero-in absolute bottom-[4svh] left-[var(--margin)] right-[var(--margin)] flex items-end justify-between gap-6">
             <div>
-              <p className="t-label mb-1 opacity-50">Belief</p>
-              <p className="t-h5 italic">{brand.belief}.</p>
+              <p className="t-label mb-1 opacity-50">{copy.belief_label}</p>
+              <p className="t-h5 italic">{belief}.</p>
             </div>
-            <p className="t-label hidden opacity-70 lg:block">Move to explore · Scroll</p>
+            <p className="t-label hidden opacity-70 lg:block">{copy.hint}</p>
             <div className="flex items-end gap-6 pr-16 lg:pr-20">
               <p className="t-label hidden text-right opacity-70 sm:block">
-                Since 2010
+                {copy.place[0]}
                 <br />
-                Banani, Dhaka
+                {copy.place[1]}
               </p>
-              <Button href="/#contact" big>
-                Get a Quote
+              <Button href={copy.cta.href} big>
+                {copy.cta.label}
               </Button>
             </div>
           </div>

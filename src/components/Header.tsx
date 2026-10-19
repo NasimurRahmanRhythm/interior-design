@@ -6,11 +6,13 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import Button from "./Button";
 import { useLenis } from "./SmoothScroll";
-import { brand, nav } from "@/lib/data";
+import type { Copy, Settings } from "@/lib/db/types";
 
 const EASE = [0.69, 0, 0, 1] as const;
 
-export default function Header() {
+type Props = Pick<Settings, "brand" | "contact" | "nav"> & { copy: Copy };
+
+export default function Header({ brand, contact, nav, copy }: Props) {
   const pathname = usePathname();
   const lenis = useLenis();
   const [open, setOpen] = useState(false);
@@ -84,8 +86,11 @@ export default function Header() {
           <span className="hidden h-8 w-px justify-self-center bg-current opacity-30 lg:col-start-4 lg:block" />
 
           <nav className="pointer-events-auto hidden items-center gap-[var(--gap)] lg:col-span-3 lg:col-start-5 lg:flex">
-            <Button href="/services">Services</Button>
-            <Button href="/projects">Projects</Button>
+            {copy.primary_links.map((l: { label: string; href: string }) => (
+              <Button key={l.href} href={l.href}>
+                {l.label}
+              </Button>
+            ))}
           </nav>
 
           <div className="pointer-events-auto col-span-3 col-start-4 flex items-center justify-end gap-[var(--gap)] lg:col-span-4 lg:col-start-9">
@@ -94,7 +99,7 @@ export default function Header() {
                 scrolled && !open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0"
               }`}
             >
-              <Button href="/contact">Get a Quote</Button>
+              <Button href={copy.cta.href}>{copy.cta.label}</Button>
             </div>
 
             <button
@@ -169,18 +174,16 @@ export default function Header() {
               >
                 <p className="t-label opacity-50">{brand.tagline}</p>
                 <p className="text-sm opacity-70">
-                  {brand.address[0]}
-                  <br />
-                  {brand.address[1]}
+                  {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
                 </p>
                 <div className="flex flex-col gap-1 text-sm">
-                  {brand.phones.map((p) => (
+                  {contact.phones.map((p) => (
                     <a key={p} href={`tel:${p}`} className="link-u w-fit">
                       {p}
                     </a>
                   ))}
-                  <a href={`mailto:${brand.email}`} className="link-u w-fit">
-                    {brand.email}
+                  <a href={`mailto:${contact.email}`} className="link-u w-fit">
+                    {contact.email}
                   </a>
                 </div>
               </motion.div>

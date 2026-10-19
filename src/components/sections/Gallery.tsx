@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "../SmoothScroll";
-import type { ProjectImage } from "@/lib/projects";
+import type { ProjectImage } from "@/lib/db/types";
 
 // Project photos; a click opens them full screen, arrows and Escape work there.
 export default function Gallery({ images, title }: { images: ProjectImage[]; title: string }) {

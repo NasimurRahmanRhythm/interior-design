@@ -3,25 +3,21 @@
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import ProjectCard from "../ProjectCard";
-import { projects, type DivisionId } from "@/lib/projects";
+import type { Copy, Project } from "@/lib/db/types";
 
-const FILTERS: { id: DivisionId | "all"; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "events", label: "Events & Fairs" },
-  { id: "exhibition", label: "Exhibition" },
-  { id: "interior", label: "Interior" },
-  { id: "brand", label: "Brand, PR & Digital" },
-];
-
-export default function ProjectBrowser() {
+export default function ProjectBrowser({ projects, copy }: { projects: Project[]; copy: Copy }) {
+  const FILTERS: { id: string; label: string }[] = [
+    { id: "all", label: copy.all },
+    ...Object.entries(copy.divisions as Record<string, string>).map(([id, label]) => ({ id, label })),
+  ];
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const raw = params.get("division");
-  const active = FILTERS.some((f) => f.id === raw) ? (raw as DivisionId) : "all";
+  const active = FILTERS.some((f) => f.id === raw) ? raw! : "all";
   const category = params.get("category");
 
-  const inDivision = useMemo(() => (active === "all" ? projects : projects.filter((p) => p.division === active)), [active]);
+  const inDivision = useMemo(() => (active === "all" ? projects : projects.filter((p) => p.division === active)), [active, projects]);
   const categories = useMemo(() => [...new Set(inDivision.map((p) => p.category))], [inDivision]);
   const shown = category ? inDivision.filter((p) => p.category === category) : inDivision;
 
@@ -57,7 +53,7 @@ export default function ProjectBrowser() {
         </div>
         <div className="col-span-6 flex flex-wrap gap-x-4 gap-y-2 text-sm lg:col-span-12">
           <button type="button" onClick={() => go(active)} className={category ? "opacity-50 hover:opacity-100" : "underline underline-offset-4"}>
-            Every category
+            {copy.every_category}
           </button>
           {categories.map((c) => (
             <button

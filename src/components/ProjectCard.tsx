@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/lib/projects";
+import type { Project } from "@/lib/db/types";
 
 type Props = { project: Project; sizes?: string; className?: string; tall?: boolean };
 
@@ -9,13 +9,15 @@ export default function ProjectCard({ project, sizes = "(min-width:1024px) 30vw,
   return (
     <Link href={`/projects/${project.slug}`} className={`group block ${className}`}>
       <div className={`fit bg-stone ${tall ? "aspect-[4/5]" : "aspect-[4/3]"}`}>
-        <Image
-          src={cover.src}
-          alt={`${project.title}${project.client ? `, ${project.client}` : ""}`}
-          fill
-          sizes={sizes}
-          className="object-cover transition-transform duration-1000 ease-cubic group-hover:scale-105"
-        />
+        {cover && (
+          <Image
+            src={cover.src}
+            alt={`${project.title}${project.client ? `, ${project.client}` : ""}`}
+            fill
+            sizes={sizes}
+            className="object-cover transition-transform duration-1000 ease-cubic group-hover:scale-105"
+          />
+        )}
       </div>
       <p className="t-label mt-4 opacity-55">
         {project.category}

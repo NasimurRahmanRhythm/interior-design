@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { getCopy, getSettings } from "@/lib/db/queries";
 
 const bodoni = Bodoni_Moda({ subsets: ["latin"], variable: "--font-bodoni", display: "swap" });
 const instrument = Instrument_Serif({
@@ -18,30 +19,36 @@ const instrument = Instrument_Serif({
 });
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken", display: "swap" });
 
-export const metadata: Metadata = {
-  title: "Integrity 360 Degree — Events, Exhibitions, Interiors & Brand",
-  description:
-    "Integrity 360 Degree is a Dhaka-based 360° agency, established in 2010: event and fair management, exhibition stalls, interior and architectural design, PR, media and digital.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getCopy("home");
+  return { title: meta.title, description: meta.description };
+}
 
 export const viewport: Viewport = {
   themeColor: "#151415",
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const [settings, global] = await Promise.all([getSettings(), getCopy("global")]);
   return (
     // Browser extensions add their own attributes to <html>/<body> before React
     // hydrates; suppress the warning for these two elements only.
     <html lang="en" className={`${bodoni.variable} ${instrument.variable} ${hanken.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SmoothScroll>
-          <Preloader />
+          <Preloader brand={settings.brand} />
           <Cursor />
-          <Header />
+          <Header brand={settings.brand} contact={settings.contact} nav={settings.nav} copy={global.header} />
           <main>{children}</main>
-          <Footer />
-          <WhatsAppButton />
+          <Footer
+            brand={settings.brand}
+            contact={settings.contact}
+            socials={settings.socials}
+            nav={settings.nav}
+            copy={global.footer}
+          />
+          <WhatsAppButton number={settings.contact.whatsapp} />
         </SmoothScroll>
       </body>
     </html>

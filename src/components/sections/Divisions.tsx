@@ -6,11 +6,10 @@ import { AnimatePresence, motion } from "motion/react";
 import Button from "../Button";
 import SplitTitle from "../SplitTitle";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { divisions } from "@/lib/data";
+import type { Copy, Division } from "@/lib/db/types";
 
-const STEP = 360 / divisions.length;
-
-export default function Divisions() {
+export default function Divisions({ divisions, copy }: { divisions: Division[]; copy: Copy }) {
+  const STEP = 360 / divisions.length;
   const root = useRef<HTMLElement>(null);
   const ring = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -78,7 +77,7 @@ export default function Divisions() {
         stage.removeEventListener("pointercancel", up);
       };
     },
-    { scope: root }
+    { scope: root, dependencies: [divisions] }
   );
 
   const current = divisions[active];
@@ -88,11 +87,11 @@ export default function Divisions() {
       <div className="div-track relative h-[340vh]">
         <div className="sticky top-0 flex h-svh flex-col overflow-hidden pt-24 lg:pt-28">
           <div className="px-[var(--margin)] text-center">
-            <p className="t-label opacity-60">Four divisions · One partner</p>
+            <p className="t-label opacity-60">{copy.eyebrow}</p>
             <h2 className="mt-3 flex flex-wrap items-baseline justify-center gap-x-[0.25em] font-display text-[clamp(2.6rem,6.4vw,6.5rem)] leading-[0.9] tracking-[-0.035em]">
-              <SplitTitle text="A full" />
-              <SplitTitle text="360°" className="font-serif italic" delay={0.08} />
-              <SplitTitle text="of service" delay={0.16} />
+              <SplitTitle text={copy.title[0]} />
+              <SplitTitle text={copy.title[1]} className="font-serif italic" delay={0.08} />
+              <SplitTitle text={copy.title[2]} delay={0.16} />
             </h2>
           </div>
 
@@ -108,12 +107,12 @@ export default function Divisions() {
                   style={{ transform: `rotateY(${i * STEP}deg) translateZ(calc(min(54vw, 300px) * 0.85))` }}
                 >
                   <div className="fit min-h-0 flex-1">
-                    <Image src={item.image} alt="" fill sizes="(min-width:1024px) 22vw, 54vw" className="object-cover" draggable={false} />
+                    <Image src={item.card.image} alt="" fill sizes="(min-width:1024px) 22vw, 54vw" className="object-cover" draggable={false} />
                   </div>
                   <div className="p-4 lg:p-5">
-                    <p className="t-label opacity-50">0{i + 1}</p>
-                    <h3 className="t-h5 mt-1">{item.title}</h3>
-                    <p className="mt-2 text-xs leading-relaxed opacity-60">{item.short}</p>
+                    <p className="t-label opacity-50">{item.number}</p>
+                    <h3 className="t-h5 mt-1">{item.card.title}</h3>
+                    <p className="mt-2 text-xs leading-relaxed opacity-60">{item.card.short}</p>
                   </div>
                 </article>
               ))}
@@ -131,7 +130,7 @@ export default function Divisions() {
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.4 }}
                 >
-                  {current.services.map((s) => (
+                  {current.card.services.map((s) => (
                     <li key={s} className="flex items-center gap-2">
                       <span className="h-1 w-1 rounded-full bg-umber" />
                       {s}
@@ -141,10 +140,10 @@ export default function Divisions() {
               </AnimatePresence>
             </div>
             <div className="col-span-6 mt-5 flex items-center justify-between gap-4 pr-16 lg:col-span-4 lg:mt-0 lg:justify-end lg:pr-20">
-              <p className="t-label opacity-60 lg:hidden">Drag or scroll to turn</p>
+              <p className="t-label opacity-60 lg:hidden">{copy.hint}</p>
               <div className="flex gap-2">
-                <Button href={`/services/${current.id}`}>Explore</Button>
-                <Button href="#contact">Discuss a project</Button>
+                <Button href={`/services/${current.id}`}>{copy.explore}</Button>
+                <Button href="#contact">{copy.cta}</Button>
               </div>
             </div>
           </div>

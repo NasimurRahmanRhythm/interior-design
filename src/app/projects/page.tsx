@@ -3,26 +3,29 @@ import { Suspense } from "react";
 import PageHero from "@/components/PageHero";
 import Contact from "@/components/sections/Contact";
 import ProjectBrowser from "@/components/sections/ProjectBrowser";
-import { projects } from "@/lib/projects";
+import { fill } from "@/lib/db/fill";
+import { getCopy, getProjects, getSettings } from "@/lib/db/queries";
 
-export const metadata: Metadata = {
-  title: "Projects — Integrity 360 Degree",
-  description: "Events, fairs, activations, exhibition stalls, interiors, PR and media delivered by Integrity 360 Degree since 2010.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getCopy("projects");
+  return { title: meta.title, description: meta.description };
+}
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const [settings, copy, home, projects] = await Promise.all([getSettings(), getCopy("projects"), getCopy("home"), getProjects()]);
+
   return (
     <>
       <PageHero
-        title="Projects"
-        accent="Since 2010"
-        label={`${projects.length} projects`}
-        text="Concerts and conferences, bank branch openings, stalls for more than sixty exhibitors, offices, cafés and law chambers — filter by division or category."
+        title={copy.hero.title}
+        accent={copy.hero.accent}
+        label={fill(copy.hero.label, { count: projects.length })}
+        text={copy.hero.text}
       />
       <Suspense>
-        <ProjectBrowser />
+        <ProjectBrowser projects={projects} copy={copy.filters} />
       </Suspense>
-      <Contact />
+      <Contact contact={settings.contact} quote={settings.quote} copy={home.contact} />
     </>
   );
 }

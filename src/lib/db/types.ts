@@ -1,0 +1,95 @@
+// Shapes the pages work with, built from the database rows in queries.ts.
+
+export type SceneKind = "stage" | "stall" | "room" | "brand";
+
+export type Link = { label: string; href: string };
+
+export type Settings = {
+  brand: { name: string; lines: string[]; tagline: string; belief: string };
+  contact: {
+    address: string[];
+    phones: string[];
+    whatsapp: string;
+    email: string;
+    hr_email: string;
+    hours_short: string;
+    emails: { label: string; value: string }[];
+    hours: { day: string; time: string }[];
+    response: string;
+    landmarks: string;
+    map: string;
+  };
+  socials: Link[];
+  nav: Link[];
+  trust: { value: number; suffix: string; label: string }[];
+  heroPanels: { image: string; alt: string }[];
+  reach: {
+    figures: { value: string; unit: string; text: string }[];
+    pins: { name: string; lat: number; lon: number; note: string; major?: boolean }[];
+    cities: { name: string; lat: number; lon: number }[];
+  };
+  quote: { divisions: string[]; budgets: string[]; timelines: string[] };
+};
+
+export type ProjectImage = { src: string; w: number; h: number; alt: string };
+
+export type Project = {
+  slug: string;
+  title: string;
+  division: string;
+  category: string;
+  client?: string;
+  venue?: string;
+  year?: string;
+  summary: string;
+  featured: boolean;
+  images: ProjectImage[];
+};
+
+export type Division = {
+  id: string;
+  number: string;
+  name: string;
+  title: [string, string];
+  line: string;
+  intro: string;
+  scene: SceneKind;
+  card: { title: string; short: string; services: string[]; image: string };
+  groups: { title: string; items: string[] }[];
+  figures: { value: string; label: string }[];
+  extra?: { title: string; items: string[] };
+};
+
+export type Client = { name: string; industry: string | null; marqueeRow: number | null };
+
+export type Milestone = { year: string; title: string; detail: string; image?: string };
+
+export type Step = { title: string; text: string };
+
+export type BuildKind = "stall" | "office" | "stage";
+export type Build = { id: BuildKind; label: string; title: [string, string]; steps: Step[] };
+
+export type Finish = { name: string; floor: string; wall: string; accent: string; fabric: string };
+
+export type About = {
+  lead: string;
+  overview: string;
+  mission: string;
+  name: string;
+  promise: string;
+  pillars: Step[];
+  why: Step[];
+  values: string[];
+  wheel: string[];
+};
+
+export type Content = {
+  about: About;
+  processSteps: Step[];
+  processDetail: Step[];
+  builds: Build[];
+  finishes: Finish[];
+};
+
+// Page copy is stored per section as JSON; each section reads the fields it needs.
+export type Copy = Record<string, any>;

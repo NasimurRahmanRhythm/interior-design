@@ -2,9 +2,9 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { trust } from "@/lib/data";
+import type { Copy, Settings } from "@/lib/db/types";
 
-export default function Trust() {
+export default function Trust({ trust, copy }: { trust: Settings["trust"]; copy: Copy }) {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -30,7 +30,7 @@ export default function Trust() {
   return (
     <section ref={root} data-theme="light" className="bg-bone pb-20 pt-16 text-ink lg:pb-28 lg:pt-24">
       <div className="grid-w">
-        <p className="t-label col-span-6 mb-8 opacity-60 lg:col-span-12 lg:mb-12">Proof, not promises</p>
+        <p className="t-label col-span-6 mb-8 opacity-60 lg:col-span-12 lg:mb-12">{copy.eyebrow}</p>
         <ul className="col-span-6 grid grid-cols-2 gap-y-10 border-t border-ink/15 pt-10 sm:grid-cols-3 lg:col-span-12 lg:grid-cols-5">
           {trust.map((item) => (
             <li key={item.label} className="border-l border-ink/15 pl-4 lg:pl-6">

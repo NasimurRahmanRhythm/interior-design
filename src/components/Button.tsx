@@ -7,11 +7,12 @@ type Props = {
   className?: string;
   type?: "button" | "submit";
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 // Outlined label button. The fill wipes up on hover and the label switches to
 // the surrounding background colour (--bg, set by data-theme / data-tone).
-export default function Button({ children, href, big, className = "", type = "button", onClick }: Props) {
+export default function Button({ children, href, big, className = "", type = "button", onClick, disabled }: Props) {
   const classes = `group relative inline-flex items-center justify-center overflow-hidden border border-current t-label ${
     big ? "px-7 py-4" : "px-4 py-2.5"
   } ${className}`;
@@ -32,7 +33,7 @@ export default function Button({ children, href, big, className = "", type = "bu
   }
 
   return (
-    <button type={type} className={classes} onClick={onClick}>
+    <button type={type} className={`${classes} disabled:opacity-50`} onClick={onClick} disabled={disabled}>
       {inner}
     </button>
   );

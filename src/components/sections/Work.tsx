@@ -6,12 +6,9 @@ import Link from "next/link";
 import Button from "../Button";
 import SplitTitle from "../SplitTitle";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { featuredWork } from "@/lib/data";
-import { getProject, type Project } from "@/lib/projects";
+import type { Copy, Project } from "@/lib/db/types";
 
-const work = featuredWork.map((slug) => getProject(slug)).filter((p): p is Project => Boolean(p));
-
-export default function Work() {
+export default function Work({ work, copy }: { work: Project[]; copy: Copy }) {
   const root = useRef<HTMLElement>(null);
   const strip = useRef<HTMLDivElement>(null);
 
@@ -52,16 +49,16 @@ export default function Work() {
         <div className="sticky top-0 flex h-svh flex-col overflow-hidden pt-24 lg:pt-28">
           <div className="grid-w relative z-10 items-end">
             <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] font-display text-[clamp(3.4rem,8vw,8rem)] leading-[0.9] tracking-[-0.04em] lg:col-span-9">
-              <SplitTitle text="Selected" />
-              <SplitTitle text="Work" className="font-serif italic" delay={0.1} />
+              <SplitTitle text={copy.title[0]} />
+              <SplitTitle text={copy.title[1]} className="font-serif italic" delay={0.1} />
             </h2>
             <div className="col-span-6 mt-4 lg:col-span-3 lg:mt-0 lg:justify-self-end">
-              <Button href="/projects">All projects</Button>
+              <Button href={copy.cta.href}>{copy.cta.label}</Button>
             </div>
           </div>
 
           <div ref={strip} className="relative mt-10 flex w-max items-start gap-[3vw] will-change-transform lg:mt-8">
-            {work.map((item, i) => (
+            {work.filter((item) => item.images.length).map((item, i) => (
               <Link
                 key={item.slug}
                 href={`/projects/${item.slug}`}

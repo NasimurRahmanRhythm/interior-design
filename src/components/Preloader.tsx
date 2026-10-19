@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { setReady } from "@/lib/ready";
-import { brand } from "@/lib/data";
+import type { Settings } from "@/lib/db/types";
 
-export default function Preloader() {
+export default function Preloader({ brand }: Pick<Settings, "brand">) {
   const root = useRef<HTMLDivElement>(null);
   const count = useRef<HTMLSpanElement>(null);
   const [done, setDone] = useState(false);

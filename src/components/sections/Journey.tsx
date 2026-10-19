@@ -5,7 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import SplitTitle from "../SplitTitle";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { journey } from "@/lib/data";
+import type { Copy, Milestone } from "@/lib/db/types";
 
 // An Archimedean spiral (r = A + B·θ) drawn from the centre outward and squashed
 // vertically so it reads as a disc seen at an angle.
@@ -51,9 +51,9 @@ function useSpiral() {
 }
 
 // Milestones sit at even steps along the line, with a little room at each end.
-const stopAt = (i: number) => 0.04 + (i / (journey.length - 1)) * 0.945;
+const stopAt = (i: number, count: number) => 0.04 + (i / Math.max(1, count - 1)) * 0.945;
 
-export default function Journey() {
+export default function Journey({ journey, copy }: { journey: Milestone[]; copy: Copy }) {
   const root = useRef<HTMLElement>(null);
   const trail = useRef<SVGPathElement>(null);
   const dot = useRef<SVGGElement>(null);
@@ -69,7 +69,7 @@ export default function Journey() {
         dot.current?.setAttribute("transform", `translate(${x} ${y})`);
         let current = 0;
         journey.forEach((_, i) => {
-          if (p >= stopAt(i) - 0.01) current = i;
+          if (p >= stopAt(i, journey.length) - 0.01) current = i;
         });
         setActive(current);
       };
@@ -95,7 +95,7 @@ export default function Journey() {
       window.addEventListener("pointermove", move, { passive: true });
       return () => window.removeEventListener("pointermove", move);
     },
-    { scope: root, dependencies: [spiral] }
+    { scope: root, dependencies: [spiral, journey] }
   );
 
   const item = journey[active];
@@ -104,15 +104,14 @@ export default function Journey() {
     <section ref={root} id="journey" data-theme="light" className="relative bg-[#ece4d6] text-ink">
       <div className="grid-w pb-6 pt-24 lg:pt-36">
         <div className="col-span-6 lg:col-span-7">
-          <p className="t-label mb-4 opacity-60">Our journey</p>
+          <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
           <h2 className="flex flex-wrap items-baseline gap-x-[0.25em]">
-            <SplitTitle text="Since" className="t-lrg" />
-            <SplitTitle text="2010" className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={copy.title[0]} className="t-lrg" />
+            <SplitTitle text={copy.title[1]} className="t-lrg font-serif italic" delay={0.1} />
           </h2>
         </div>
         <p className="col-span-6 mt-6 max-w-sm text-sm leading-relaxed opacity-70 lg:col-span-3 lg:col-start-10 lg:mt-0 lg:self-end">
-          From one office in Banani to stadium-sized events. Every turn of the line is a step we took — scroll to
-          follow it.
+          {copy.text}
         </p>
       </div>
 
@@ -134,7 +133,7 @@ export default function Journey() {
                 />
 
                 {journey.map((stop, i) => {
-                  const [x, y, ang] = spiral.at(stopAt(i));
+                  const [x, y, ang] = spiral.at(stopAt(i, journey.length));
                   const ux = Math.cos(ang);
                   const uy = Math.sin(ang);
                   const anchor = ux > 0.25 ? "start" : ux < -0.25 ? "end" : "middle";

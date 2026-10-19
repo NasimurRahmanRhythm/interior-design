@@ -3,10 +3,9 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { about } from "@/lib/pages";
 
 // The eight services from the company profile, turning on a tilted ring around the logo.
-export default function ServiceWheel() {
+export default function ServiceWheel({ wheel }: { wheel: string[] }) {
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -44,7 +43,7 @@ export default function ServiceWheel() {
       <div className="absolute left-1/2 top-1/2 z-[5] w-[24%] -translate-x-1/2 -translate-y-1/2 sm:w-[16%]">
         <Image src="/images/logo-mark.png" alt="" width={512} height={512} className="h-auto w-full" />
       </div>
-      {about.wheel.map((name) => (
+      {wheel.map((name) => (
         <span
           key={name}
           role="listitem"

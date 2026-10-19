@@ -4,28 +4,33 @@ import RevealText from "@/components/RevealText";
 import SplitTitle from "@/components/SplitTitle";
 import BuildStudy from "@/components/sections/BuildStudy";
 import Contact from "@/components/sections/Contact";
-import { divisionPages, processDetail } from "@/lib/pages";
+import { getContent, getCopy, getDivisions, getSettings } from "@/lib/db/queries";
+import type { Division } from "@/lib/db/types";
 
-export const metadata: Metadata = {
-  title: "Process — Integrity 360 Degree",
-  description: "How a project runs with us, from the brief to the handover.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getCopy("process");
+  return { title: meta.title, description: meta.description };
+}
 
-export default function ProcessPage() {
-  const exhibition = divisionPages.find((d) => d.id === "exhibition")!;
-  const brand = divisionPages.find((d) => d.id === "brand")!;
+export default async function ProcessPage() {
+  const [settings, copy, home, content, divisions] = await Promise.all([
+    getSettings(),
+    getCopy("process"),
+    getCopy("home"),
+    getContent(),
+    getDivisions(),
+  ]);
+  const shown = (copy.divisions.divisions as string[])
+    .map((id) => divisions.find((d) => d.id === id))
+    .filter((d): d is Division => Boolean(d));
+
   return (
     <>
-      <PageHero
-        title="Process"
-        accent="Brief to handover"
-        label="Seven steps, one team"
-        text="Every project — a stall, a stage, an office or a campaign — runs through the same seven steps, with our own workshop and crew in the middle."
-      />
+      <PageHero title={copy.hero.title} accent={copy.hero.accent} label={copy.hero.label} text={copy.hero.text} />
 
       <section data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
         <ol className="grid-w gap-y-0">
-          {processDetail.map((step, i) => (
+          {content.processDetail.map((step, i) => (
             <li key={step.title} className="col-span-6 grid grid-cols-6 items-baseline gap-x-[var(--gap)] gap-y-3 border-t border-ink/20 py-8 lg:col-span-12 lg:grid-cols-12 lg:py-10">
               <span className="t-label col-span-1 opacity-50">0{i + 1}</span>
               <h2 className="col-span-5 font-display text-[clamp(2.2rem,5vw,4.6rem)] leading-none tracking-[-0.035em] lg:col-span-5">
@@ -39,11 +44,11 @@ export default function ProcessPage() {
         </ol>
       </section>
 
-      <BuildStudy />
+      <BuildStudy builds={content.builds} finishes={content.finishes} copy={home.build} />
 
       <section data-theme="light" className="bg-[#ece4d6] py-24 text-ink lg:py-36">
         <div className="grid-w gap-y-12">
-          {[exhibition, brand].map((d) => (
+          {shown.map((d) => (
             <div key={d.id} className="col-span-6 lg:col-span-6">
               <p className="t-label opacity-50">{d.name}</p>
               <ul className="mt-6 flex flex-col">
@@ -59,7 +64,7 @@ export default function ProcessPage() {
         </div>
       </section>
 
-      <Contact />
+      <Contact contact={settings.contact} quote={settings.quote} copy={home.contact} />
     </>
   );
 }

@@ -1,23 +1,23 @@
 import RevealText from "../RevealText";
-import { clientNames } from "@/lib/data";
+import type { Copy } from "@/lib/db/types";
 
-export default function Clients() {
+export default function Clients({ rows, copy }: { rows: string[][]; copy: Copy }) {
   return (
     <section id="clients" data-theme="light" className="overflow-hidden bg-[#ece4d6] py-24 text-ink lg:py-36">
       <div className="grid-w">
-        <p className="t-label col-span-6 text-center opacity-60 lg:col-span-12">Belief</p>
+        <p className="t-label col-span-6 text-center opacity-60 lg:col-span-12">{copy.eyebrow}</p>
         <h2 className="t-h1 col-span-6 mt-6 text-center lg:col-span-10 lg:col-start-2">
           <RevealText as="span" className="block">
-            We believe in first impression — our clients are our
+            {copy.title[0]}
           </RevealText>
           <RevealText as="span" className="block italic" delay={0.1}>
-            real marketer.
+            {copy.title[1]}
           </RevealText>
         </h2>
       </div>
 
       <div className="mt-16 flex flex-col gap-4 lg:mt-24" aria-label="Some of our clients">
-        {clientNames.map((row, r) => (
+        {rows.map((row, r) => (
           <div key={r} className="overflow-hidden">
             <ul className={`marquee ${r % 2 ? "reverse" : ""}`}>
               {[...row, ...row].map((name, i) => (
