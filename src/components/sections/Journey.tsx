@@ -116,9 +116,12 @@ export default function Journey({ journey, copy }: { journey: Milestone[]; copy:
       </div>
 
       <div className="journey-track relative h-[420vh]">
-        <div className="sticky top-0 flex h-svh flex-col overflow-hidden lg:flex-row lg:items-center">
-          <div className="relative flex flex-1 items-center justify-center px-[var(--margin)] pt-16 lg:order-2 lg:pt-0">
-            <div ref={tilt} className="w-[135%] max-w-none shrink-0 will-change-transform sm:w-full sm:max-w-[1100px]">
+        {/* Below lg the spiral and the milestone sit together in the middle of the screen. The year
+            labels are hidden there, so the spiral is drawn larger and the empty edges of its box are
+            trimmed with negative margins. */}
+        <div className="sticky top-0 flex h-svh flex-col justify-center gap-6 overflow-hidden pt-16 lg:flex-row lg:items-center lg:justify-start lg:gap-0 lg:pt-0">
+          <div className="relative flex items-center justify-center px-[var(--margin)] lg:order-2 lg:flex-1">
+            <div ref={tilt} className="-my-[17%] w-[170%] max-w-none shrink-0 will-change-transform sm:-my-[10%] sm:w-full sm:max-w-[1100px] lg:my-0">
               <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full overflow-visible" role="img" aria-label="Company timeline">
                 <path d={spiral.d} fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="1.4" />
                 <path
@@ -178,7 +181,7 @@ export default function Journey({ journey, copy }: { journey: Milestone[]; copy:
             </div>
           </div>
 
-          <div className="relative z-10 shrink-0 px-[var(--margin)] pb-8 lg:order-1 lg:w-[30vw] lg:pb-0">
+          <div className="relative z-10 min-h-[13.5rem] shrink-0 px-[var(--margin)] lg:order-1 lg:min-h-0 lg:w-[30vw]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={item.year}
