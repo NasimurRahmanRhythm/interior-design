@@ -23,13 +23,11 @@ export type Settings = {
   nav: Link[];
   trust: { value: number; suffix: string; label: string }[];
   heroPanels: { image: string; alt: string }[];
-  reach: {
-    figures: { value: string; unit: string; text: string }[];
-    pins: { name: string; lat: number; lon: number; note: string; major?: boolean }[];
-    cities: { name: string; lat: number; lon: number }[];
-  };
   quote: { divisions: string[]; budgets: string[]; timelines: string[] };
 };
+
+// A place on the landing page map; the title shows on hover.
+export type MapPoint = { id: string; title: string; lat: number; lon: number };
 
 export type ProjectImage = { src: string; w: number; h: number; alt: string };
 

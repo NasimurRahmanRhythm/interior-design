@@ -75,7 +75,7 @@ export default async function Clients() {
       />
       <section className={`${card} mb-8`}>
         <h2 className="mb-4 font-serif text-2xl">Add a client</h2>
-        <ActionForm action={saveClient.bind(null, null)} submit="Add client">
+        <ActionForm action={saveClient.bind(null, null)} submit="Add client" clearOnSuccess>
           <Fields industries={industries} />
         </ActionForm>
       </section>

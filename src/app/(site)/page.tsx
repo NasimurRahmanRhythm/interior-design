@@ -8,10 +8,10 @@ import Reach from "@/components/sections/Reach";
 import Clients from "@/components/sections/Clients";
 import Process from "@/components/sections/Process";
 import Contact from "@/components/sections/Contact";
-import { getContent, getCopy, getDivisions, getFeaturedProjects, getJourney, getMarquee, getSettings } from "@/lib/db/queries";
+import { getContent, getCopy, getDivisions, getFeaturedProjects, getJourney, getMapPoints, getMarquee, getSettings } from "@/lib/db/queries";
 
 export default async function HomePage() {
-  const [settings, copy, content, journey, divisions, work, marquee] = await Promise.all([
+  const [settings, copy, content, journey, divisions, work, marquee, points] = await Promise.all([
     getSettings(),
     getCopy("home"),
     getContent(),
@@ -19,6 +19,7 @@ export default async function HomePage() {
     getDivisions(),
     getFeaturedProjects(),
     getMarquee(),
+    getMapPoints(),
   ]);
 
   return (
@@ -29,7 +30,7 @@ export default async function HomePage() {
       <Divisions divisions={divisions} copy={copy.divisions} />
       <BuildStudy builds={content.builds} finishes={content.finishes} copy={copy.build} />
       <Work work={work} copy={copy.work} />
-      <Reach reach={settings.reach} copy={copy.reach} />
+      <Reach points={points} copy={copy.reach} />
       <Clients rows={marquee} copy={copy.clients} />
       <Process steps={content.processSteps} copy={copy.process} />
       <Contact contact={settings.contact} quote={settings.quote} copy={copy.contact} />

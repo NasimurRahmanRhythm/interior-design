@@ -1,27 +1,41 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import RevealText from "../RevealText";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { BD_PATH, BD_VIEWBOX, project } from "@/lib/bangladesh";
-import type { Copy, Settings } from "@/lib/db/types";
+import { BD_PATH, BD_VIEWBOX, CITIES, project } from "@/lib/bangladesh";
+import type { Copy, MapPoint } from "@/lib/db/types";
 
-export default function Reach({ reach, copy }: { reach: Settings["reach"]; copy: Copy }) {
+type Figure = { value: string; unit: string; text: string };
+
+export default function Reach({ points, copy }: { points: MapPoint[]; copy: Copy }) {
   const root = useRef<HTMLElement>(null);
+  // The point whose title is showing: hovered, focused or tapped.
+  const [open, setOpen] = useState<string | null>(null);
+  const figures: Figure[] = copy.figures ?? [];
+
+  // A tap anywhere else closes the title on touch screens.
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: PointerEvent) => {
+      if (!(e.target as Element).closest(".reach-pin")) setOpen(null);
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [open]);
 
   useGSAP(
     () => {
       gsap.from(".reach-pin", {
         opacity: 0,
         scale: 0.4,
-        transformOrigin: "center",
         duration: 0.9,
-        stagger: 0.18,
+        stagger: 0.12,
         ease: "power3.out",
         scrollTrigger: { trigger: ".reach-map", start: "top 70%", once: true },
       });
     },
-    { scope: root }
+    { scope: root, dependencies: [points] }
   );
 
   return (
@@ -29,8 +43,8 @@ export default function Reach({ reach, copy }: { reach: Settings["reach"]; copy:
       <div className="grid-w items-center gap-y-14">
         <div className="col-span-6 lg:col-span-5 lg:col-start-1">
           <p className="t-label mb-6 opacity-60">{copy.eyebrow}</p>
-          {reach.figures.map((f, i) => (
-            <div key={f.unit} className={i ? "mt-8" : ""}>
+          {figures.map((f, i) => (
+            <div key={`${f.value}${f.unit}`} className={i ? "mt-8" : ""}>
               <p className="flex items-baseline gap-4">
                 <span className="font-display text-[clamp(5rem,11vw,10rem)] leading-[0.85] tracking-[-0.045em]">{f.value}</span>
                 <span className="t-h1 italic">{f.unit}</span>
@@ -41,48 +55,57 @@ export default function Reach({ reach, copy }: { reach: Settings["reach"]; copy:
         </div>
 
         <div className="reach-map col-span-6 lg:col-span-6 lg:col-start-7">
-          <svg viewBox={`0 0 ${BD_VIEWBOX.width} ${BD_VIEWBOX.height}`} className="mx-auto h-auto w-full max-w-[560px]" role="img" aria-label="Map of Bangladesh with project locations">
-            <path d={BD_PATH} fill="currentColor" fillOpacity="0.06" stroke="currentColor" strokeOpacity="0.45" strokeWidth="1.1" strokeLinejoin="round" />
+          <div className="relative mx-auto w-full max-w-[560px]" onMouseLeave={() => setOpen(null)}>
+            <svg viewBox={`0 0 ${BD_VIEWBOX.width} ${BD_VIEWBOX.height}`} className="block h-auto w-full" role="img" aria-label="Map of Bangladesh">
+              <path d={BD_PATH} fill="currentColor" fillOpacity="0.06" stroke="currentColor" strokeOpacity="0.45" strokeWidth="1.1" strokeLinejoin="round" />
+              {CITIES.map((c) => {
+                const [x, y] = project(c.lat, c.lon);
+                return (
+                  <g key={c.name} opacity="0.35">
+                    <circle cx={x} cy={y} r="2.5" fill="currentColor" />
+                    <text x={x + 7} y={y + 4} fontSize="10" letterSpacing="1.5" fill="currentColor">
+                      {c.name.toUpperCase()}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
 
-            {reach.cities.map((c) => {
-              const [x, y] = project(c.lat, c.lon);
-              return (
-                <g key={c.name} opacity="0.4">
-                  <circle cx={x} cy={y} r="2.5" fill="currentColor" />
-                  <text x={x + 7} y={y + 4} fontSize="10" letterSpacing="1.5" fill="currentColor">
-                    {c.name.toUpperCase()}
-                  </text>
-                </g>
-              );
-            })}
-
-            {reach.pins.map((pin) => {
-              const [x, y] = project(pin.lat, pin.lon);
-              const left = pin.name === "Savar";
-              return (
-                <g key={pin.name} className="reach-pin">
-                  <title>{`${pin.name} — ${pin.note}`}</title>
-                  {pin.major && (
-                    <>
-                      <circle cx={x} cy={y} r="26" fill="none" stroke="#7b5136" strokeOpacity="0.35" />
-                      <circle cx={x} cy={y} r="46" fill="none" stroke="#7b5136" strokeOpacity="0.18" />
-                    </>
-                  )}
-                  <circle cx={x} cy={y} r={pin.major ? 8 : 5} fill="#7b5136" />
-                  <text
-                    x={left ? x - 10 : x + 12}
-                    y={pin.name === "Gazipur" ? y - 8 : pin.major ? y + 18 : y + 4}
-                    textAnchor={left ? "end" : "start"}
-                    fontSize="12"
-                    letterSpacing="2"
-                    fill="currentColor"
-                  >
-                    {pin.name.toUpperCase()}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+            <ul aria-label="Where we have worked">
+              {points.map((p) => {
+                const [x, y] = project(p.lat, p.lon);
+                const left = (x / BD_VIEWBOX.width) * 100;
+                const top = (y / BD_VIEWBOX.height) * 100;
+                const shown = open === p.id;
+                return (
+                  <li key={p.id} className="absolute" style={{ left: `${left}%`, top: `${top}%`, zIndex: shown ? 20 : 10 }}>
+                    <button
+                      type="button"
+                      aria-label={p.title}
+                      aria-expanded={shown}
+                      // Hover with a mouse, focus with the keyboard, tap on touch screens.
+                      onPointerEnter={(e) => e.pointerType === "mouse" && setOpen(p.id)}
+                      onFocus={(e) => e.currentTarget.matches(":focus-visible") && setOpen(p.id)}
+                      onBlur={() => setOpen((o) => (o === p.id ? null : o))}
+                      onClick={() => setOpen((o) => (o === p.id ? null : p.id))}
+                      className="reach-pin group absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+                    >
+                      <span className={`absolute h-full w-full rounded-full bg-umber/20 transition-transform duration-500 ${shown ? "scale-150" : "scale-100"}`} />
+                      <span className="relative h-2.5 w-2.5 rounded-full bg-umber ring-2 ring-bone" />
+                    </button>
+                    <span
+                      role="tooltip"
+                      className={`pointer-events-none absolute bottom-4 w-max max-w-[min(16rem,60vw)] rounded-sm bg-ink px-3 py-2 text-xs leading-snug text-bone shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-[opacity,translate] duration-300 ${
+                        left > 60 ? "right-0 translate-x-3" : left < 40 ? "left-0 -translate-x-3" : "left-1/2 -translate-x-1/2"
+                      } ${shown ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"}`}
+                    >
+                      {p.title}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
           <p className="t-label mt-4 text-center opacity-50">{copy.note}</p>
         </div>
       </div>

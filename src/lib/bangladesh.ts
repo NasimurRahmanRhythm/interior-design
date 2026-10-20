@@ -16,3 +16,15 @@ const OFFSET_Y = 16;
 export function project(lat: number, lon: number): [number, number] {
   return [OFFSET_X + (lon * K - MIN_X) * SCALE, OFFSET_Y + (MAX_Y - lat) * SCALE];
 }
+
+// Division cities, drawn faintly as reference points on the map.
+export const CITIES = [
+  { name: "Rangpur", lat: 25.74, lon: 89.25 },
+  { name: "Rajshahi", lat: 24.37, lon: 88.6 },
+  { name: "Mymensingh", lat: 24.75, lon: 90.41 },
+  { name: "Sylhet", lat: 24.89, lon: 91.87 },
+  { name: "Khulna", lat: 22.85, lon: 89.54 },
+  { name: "Barishal", lat: 22.7, lon: 90.37 },
+  { name: "Chattogram", lat: 22.36, lon: 91.78 },
+  { name: "Cox's Bazar", lat: 21.43, lon: 92.0 },
+];

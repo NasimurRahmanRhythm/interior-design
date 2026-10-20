@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { db } from "./client";
 import { mediaUrl } from "./media";
-import type { Client, Content, Copy, Division, Milestone, Project, Settings } from "./types";
+import type { Client, Content, Copy, Division, MapPoint, Milestone, Project, Settings } from "./types";
 
 function check<T>({ data, error }: { data: T; error: { message: string } | null }, what: string): NonNullable<T> {
   if (error || data === null) throw new Error(`Could not load ${what}: ${error?.message ?? "no rows"}`);
@@ -18,7 +18,6 @@ export const getSettings = cache(async (): Promise<Settings> => {
     nav: s.nav,
     trust: s.trust_stats,
     heroPanels: s.hero_panels.map((p: { image: string; alt: string }) => ({ image: mediaUrl(p.image), alt: p.alt })),
-    reach: s.reach,
     quote: s.quote_options,
   };
 });
@@ -156,4 +155,9 @@ export const getJourney = cache(async (): Promise<Milestone[]> => {
     detail: m.detail,
     image: mediaUrl(m.image_path),
   }));
+});
+
+export const getMapPoints = cache(async (): Promise<MapPoint[]> => {
+  const rows = check(await (await db()).from("map_points").select("id, title, lat, lon").order("created_at"), "map points");
+  return rows as MapPoint[];
 });

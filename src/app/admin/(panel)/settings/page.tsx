@@ -15,7 +15,6 @@ const SECTIONS: { column: SettingsColumn; title: string; text: string }[] = [
   { column: "socials", title: "Social links", text: "" },
   { column: "hero_panels", title: "Landing hero photos", text: "The photos floating in the landing page hero." },
   { column: "trust_stats", title: "Landing figures", text: "The numbers that count up under the hero." },
-  { column: "reach", title: "Bangladesh map", text: "Figures beside the map, pins (with latitude and longitude) and city labels." },
   { column: "quote_options", title: "Quote form choices", text: "Keep the first four divisions in the same order as the divisions, so each division page picks its own." },
 ];
 

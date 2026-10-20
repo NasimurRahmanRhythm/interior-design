@@ -1,12 +1,13 @@
 # Database (Supabase)
 
-Three migrations build the database and fill it with everything the site shows today:
+The migrations build the database and fill it with everything the site shows today:
 
 | File | What it does |
 |---|---|
 | `migrations/20261019120000_schema.sql` | Tables, the `admins` list and `is_admin()`, row level security, grants, and the public `media` storage bucket with its policies. |
 | `migrations/20261019120100_seed_content.sql` | All site content: settings, contact details, page copy, divisions, 123 projects and their 160 photos, 83 clients, the journey, process steps, 3D build steps and finishes. |
 | `migrations/20261019130000_quote_form_copy.sql` | Confirmation copy for the quote form, which now saves requests to `quote_requests`. |
+| `migrations/20261020120000_map_points.sql` | `map_points` for the landing page map (title + Google Maps link, managed from Admin → Map), with the three existing pins; moves the figures beside the map into the landing page copy. |
 
 Photos are files, so SQL cannot carry them: `scripts/upload-media.mjs` copies `public/images/**` into the
 `media` bucket under the same paths the seed points to (e.g. `projects/yolo-fest/1.jpg`).

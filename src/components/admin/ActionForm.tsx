@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useEffect, useRef } from "react";
 import type { Result } from "@/lib/admin/result";
 import { button } from "./ui";
 
@@ -11,16 +11,24 @@ type Props = {
   className?: string;
   // More buttons for the footer, e.g. a delete.
   extra?: React.ReactNode;
+  // Clear the fields after a successful save, for "add" forms.
+  clearOnSuccess?: boolean;
 };
 
 // A form for an admin server action, with its save button and the result next
 // to it. Submitting through a transition keeps what was typed in the fields
 // (React would otherwise reset them after the action).
-export default function ActionForm({ action, children, submit = "Save", className = "", extra }: Props) {
+export default function ActionForm({ action, children, submit = "Save", className = "", extra, clearOnSuccess }: Props) {
   const [state, run, pending] = useActionState(action, {});
+  const form = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (clearOnSuccess && state.ok) form.current?.reset();
+  }, [state, clearOnSuccess]);
 
   return (
     <form
+      ref={form}
       className={className}
       onSubmit={(e) => {
         e.preventDefault();

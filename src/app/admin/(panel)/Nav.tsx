@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/admin/divisions", label: "Divisions" },
   { href: "/admin/clients", label: "Clients" },
   { href: "/admin/journey", label: "Journey" },
+  { href: "/admin/map", label: "Map" },
   { href: "/admin/content", label: "Page content" },
   { href: "/admin/settings", label: "Settings" },
 ];
