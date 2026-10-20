@@ -10,6 +10,7 @@ The migrations build the database and fill it with everything the site shows tod
 | `migrations/20261020120000_map_points.sql` | `map_points` for the landing page map (title + Google Maps link, managed from Admin → Map), with the three existing pins; moves the figures beside the map into the landing page copy. |
 | `migrations/20261020130000_landing_featured.sql` | Run **before** deploying: services can be shown on the landing page (up to 5), new services need no 3D scene, the landing page keeps at most 7 projects. |
 | `migrations/20261020130100_drop_page_copy.sql` | Run **after** deploying: drops `page_content` and `content_blocks`, now that page copy lives in `src/lib/copy.ts` and `src/lib/content.ts`. |
+| `migrations/20261020140000_client_logos.sql` | Sets the logos (cut from the company profiles) on 59 clients. Run `npm run upload-media` first so `public/images/clients/*` is in the bucket. Only clients with a logo run in the landing page marquee. |
 
 Photos are files, so SQL cannot carry them: `scripts/upload-media.mjs` copies `public/images/**` into the
 `media` bucket under the same paths the seed points to (e.g. `projects/yolo-fest/1.jpg`).

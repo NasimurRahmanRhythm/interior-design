@@ -102,28 +102,20 @@ export async function getFeaturedProjects() {
   return rows.map(toProject);
 }
 
-export const getClients = cache(async (): Promise<(Client & { marqueeOrder: number | null })[]> => {
-  const rows = check(
-    await (await db()).from("clients").select("name, industry, marquee_row, marquee_order").order("sort_order"),
-    "clients"
-  );
-  return rows.map((c: { name: string; industry: string | null; marquee_row: number | null; marquee_order: number | null }) => ({
+export const getClients = cache(async (): Promise<Client[]> => {
+  const rows = check(await (await db()).from("clients").select("name, industry, logo_path").order("sort_order"), "clients");
+  return rows.map((c: { name: string; industry: string | null; logo_path: string | null }) => ({
     name: c.name,
     industry: c.industry,
-    marqueeRow: c.marquee_row,
-    marqueeOrder: c.marquee_order,
+    logo: mediaUrl(c.logo_path),
   }));
 });
 
-// The two marquee rows on the landing page.
-export async function getMarquee(): Promise<string[][]> {
-  const clients = (await getClients()).filter((c) => c.marqueeRow !== null);
-  return [1, 2].map((row) =>
-    clients
-      .filter((c) => c.marqueeRow === row)
-      .sort((a, b) => (a.marqueeOrder ?? 0) - (b.marqueeOrder ?? 0))
-      .map((c) => c.name)
-  );
+// The landing page marquee: every client with a logo, shared out over two rows.
+export async function getMarquee(): Promise<{ name: string; logo: string }[][]> {
+  const logos = (await getClients()).filter((c): c is Client & { logo: string } => Boolean(c.logo));
+  const rows = [logos.filter((_, i) => i % 2 === 0), logos.filter((_, i) => i % 2 === 1)];
+  return rows.filter((r) => r.length).map((r) => r.map(({ name, logo }) => ({ name, logo })));
 }
 
 // Clients grouped by industry, in their saved order.

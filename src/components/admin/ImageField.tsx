@@ -5,10 +5,11 @@ import { mediaUrl } from "@/lib/db/media";
 import { uploadImage } from "@/lib/admin/upload";
 import { ghost } from "./ui";
 
-type Props = { value: string | null; onChange: (path: string | null) => void; folder?: string };
+// `contain` shows the whole image, for logos.
+type Props = { value: string | null; onChange: (path: string | null) => void; folder?: string; contain?: boolean };
 
 // A storage path with a preview, an upload button and a way to clear it.
-export default function ImageField({ value, onChange, folder = "uploads" }: Props) {
+export default function ImageField({ value, onChange, folder = "uploads", contain }: Props) {
   const file = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -16,7 +17,7 @@ export default function ImageField({ value, onChange, folder = "uploads" }: Prop
   return (
     <div className="flex items-start gap-4">
       <div className="h-20 w-28 shrink-0 overflow-hidden rounded-sm bg-ink/10">
-        {value && <img src={mediaUrl(value)} alt="" className="h-full w-full object-cover" />}
+        {value && <img src={mediaUrl(value)} alt="" className={`h-full w-full ${contain ? "object-contain p-2" : "object-cover"}`} />}
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs text-ink/60">{value || "No image"}</p>

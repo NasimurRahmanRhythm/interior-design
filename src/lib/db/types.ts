@@ -61,7 +61,7 @@ export type Division = {
   featuredOrder: number | null;
 };
 
-export type Client = { name: string; industry: string | null; marqueeRow: number | null };
+export type Client = { name: string; industry: string | null; logo?: string };
 
 export type Milestone = { year: string; title: string; detail: string; image?: string };
 

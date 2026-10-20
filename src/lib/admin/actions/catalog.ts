@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 import { requireAdmin } from "../auth";
-import { failed, json, number, optional, text } from "../form";
+import { failed, json, optional, text } from "../form";
 import type { Result } from "../result";
 
 type Supabase = Awaited<ReturnType<typeof requireAdmin>>["supabase"];
@@ -28,20 +28,23 @@ async function replaceRows(supabase: Supabase, table: string, match: Record<stri
 
 export async function saveClient(id: string | null, _prev: Result, form: FormData): Promise<Result> {
   const { supabase } = await requireAdmin();
-  const marquee = form.get("show_in_marquee") === "on";
   const row = {
     name: text(form, "name"),
     industry: optional(form, "industry"),
-    show_in_marquee: marquee,
-    marquee_row: marquee ? (number(form, "marquee_row") === 2 ? 2 : 1) : null,
-    marquee_order: marquee ? number(form, "marquee_order") ?? 0 : null,
-    sort_order: number(form, "sort_order") ?? 0,
+    logo_path: json<string | null>(form, "logo_path") || null,
   };
   if (!row.name) return { error: "Add the client's name." };
-  const { error } = id ? await supabase.from("clients").update(row).eq("id", id) : await supabase.from("clients").insert(row);
-  if (error) return failed(error);
+  const note = row.logo_path ? "" : " Without a logo it does not show on the landing page.";
+  if (id) {
+    const { error } = await supabase.from("clients").update(row).eq("id", id);
+    if (error) return failed(error);
+  } else {
+    const { data: last } = await supabase.from("clients").select("sort_order").order("sort_order", { ascending: false }).limit(1);
+    const { error } = await supabase.from("clients").insert({ ...row, sort_order: (last?.[0]?.sort_order ?? -1) + 1 });
+    if (error) return failed(error);
+  }
   refresh();
-  return { ok: true, message: id ? "Saved." : "Client added." };
+  return { ok: true, message: (id ? "Saved." : "Client added.") + note };
 }
 
 export async function deleteClient(id: string) {
