@@ -3,40 +3,21 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../auth";
-import { failed, number, optional, text } from "../form";
+import { LANDING_PROJECTS } from "@/lib/db/queries";
+import { failed, text } from "../form";
+import { landingOrder, uniqueSlug } from "../landing";
 import type { Result } from "../result";
-
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 export async function saveProject(id: string | null, _prev: Result, form: FormData): Promise<Result> {
   const { supabase } = await requireAdmin();
   const title = text(form, "title");
-  const slug = slugify(text(form, "slug") || title);
-  const featuredOrder = number(form, "featured_order");
-  const row = {
-    title,
-    slug,
-    division_id: text(form, "division_id"),
-    category: text(form, "category"),
-    client_id: optional(form, "client_id"),
-    client_label: optional(form, "client_label"),
-    venue: optional(form, "venue"),
-    year: optional(form, "year"),
-    summary: text(form, "summary"),
-    status: text(form, "status") === "draft" ? "draft" : "published",
-    is_featured: form.get("is_featured") === "on",
-    featured_order: featuredOrder,
-    sort_order: number(form, "sort_order") ?? 0,
-  };
+  const division = text(form, "division_id");
   if (!title) return { error: "Add a title." };
-  if (!slug) return { error: "Add a slug (letters, numbers and dashes)." };
-  if (!row.division_id) return { error: "Choose a division." };
-  if (!row.category) return { error: "Add a category." };
+  if (!division) return { error: "Choose a service." };
+
+  const landing = await landingOrder(supabase, "projects", id, form.get("landing") === "on", LANDING_PROJECTS);
+  if ("error" in landing) return { error: landing.error };
+  const row = { title, division_id: division, summary: text(form, "summary"), featured_order: landing.order };
 
   if (id) {
     const { error } = await supabase.from("projects").update(row).eq("id", id);
@@ -44,7 +25,19 @@ export async function saveProject(id: string | null, _prev: Result, form: FormDa
     refresh();
     return { ok: true };
   }
-  const { data, error } = await supabase.from("projects").insert(row).select("id").single();
+
+  // New projects come first in the lists.
+  const { data: first } = await supabase.from("projects").select("sort_order").order("sort_order").limit(1);
+  const { data, error } = await supabase
+    .from("projects")
+    .insert({
+      ...row,
+      slug: await uniqueSlug(supabase, "projects", title),
+      status: "published",
+      sort_order: (first?.[0]?.sort_order ?? 1) - 1,
+    })
+    .select("id")
+    .single();
   if (error) return failed(error);
   redirect(`/admin/projects/${data.id}?created=1`);
 }

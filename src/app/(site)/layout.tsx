@@ -5,16 +5,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Cursor from "@/components/Cursor";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { getCopy, getSettings } from "@/lib/db/queries";
+import { COPY } from "@/lib/copy";
+import { getSettings } from "@/lib/db/queries";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { meta } = await getCopy("home");
-  return { title: meta.title, description: meta.description };
-}
+export const metadata: Metadata = { title: COPY.home.meta.title, description: COPY.home.meta.description };
 
 // The public site: smooth scroll, preloader, header and footer around every page.
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [settings, global] = await Promise.all([getSettings(), getCopy("global")]);
+  const settings = await getSettings();
+  const global = COPY.global;
 
   return (
     <SmoothScroll>

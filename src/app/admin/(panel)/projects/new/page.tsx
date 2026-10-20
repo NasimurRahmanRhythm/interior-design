@@ -11,7 +11,7 @@ export default async function NewProject() {
   return (
     <>
       <PageTitle title="New project" text="Save the details first; photos can be added on the next screen." />
-      <ProjectForm options={await projectOptions(supabase)} />
+      <ProjectForm {...await projectOptions(supabase)} />
     </>
   );
 }

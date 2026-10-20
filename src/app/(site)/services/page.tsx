@@ -5,20 +5,20 @@ import PageHero from "@/components/PageHero";
 import Contact from "@/components/sections/Contact";
 import Divisions from "@/components/sections/Divisions";
 import Process from "@/components/sections/Process";
-import { getContent, getCopy, getDivisions, getProjects, getSettings } from "@/lib/db/queries";
+import { processSteps } from "@/lib/content";
+import { COPY } from "@/lib/copy";
+import { getDivisions, getFeaturedDivisions, getProjects, getQuote, getSettings } from "@/lib/db/queries";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { meta } = await getCopy("services");
-  return { title: meta.title, description: meta.description };
-}
+export const metadata: Metadata = { title: COPY.services.meta.title, description: COPY.services.meta.description };
 
 export default async function ServicesPage() {
-  const [settings, copy, home, content, divisions, projects] = await Promise.all([
+  const copy = COPY.services;
+  const home = COPY.home;
+  const [settings, quote, divisions, ring, projects] = await Promise.all([
     getSettings(),
-    getCopy("services"),
-    getCopy("home"),
-    getContent(),
+    getQuote(),
     getDivisions(),
+    getFeaturedDivisions(),
     getProjects(),
   ]);
 
@@ -26,7 +26,7 @@ export default async function ServicesPage() {
     <>
       <PageHero title={copy.hero.title} accent={copy.hero.accent} label={copy.hero.label} text={copy.hero.text} />
 
-      <Divisions divisions={divisions} copy={home.divisions} />
+      {ring.length > 0 && <Divisions divisions={ring} copy={home.divisions} />}
 
       <section data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
         <ul className="grid-w gap-y-0">
@@ -63,8 +63,8 @@ export default async function ServicesPage() {
         </ul>
       </section>
 
-      <Process steps={content.processSteps} copy={home.process} />
-      <Contact contact={settings.contact} quote={settings.quote} copy={home.contact} />
+      <Process steps={processSteps} copy={home.process} />
+      <Contact contact={settings.contact} quote={quote} copy={home.contact} />
     </>
   );
 }

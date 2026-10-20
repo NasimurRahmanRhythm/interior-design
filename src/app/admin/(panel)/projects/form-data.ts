@@ -3,16 +3,11 @@ import type { requireAdmin } from "@/lib/admin/auth";
 
 type Supabase = Awaited<ReturnType<typeof requireAdmin>>["supabase"];
 
-// Choices for the project form.
+// The services to choose from and how many landing page places are taken.
 export async function projectOptions(supabase: Supabase) {
-  const [divisions, clients, categories] = await Promise.all([
+  const [divisions, landing] = await Promise.all([
     supabase.from("divisions").select("id, name").order("sort_order"),
-    supabase.from("clients").select("id, name").order("name"),
-    supabase.from("projects").select("category"),
+    supabase.from("projects").select("id", { count: "exact", head: true }).not("featured_order", "is", null),
   ]);
-  return {
-    divisions: divisions.data ?? [],
-    clients: clients.data ?? [],
-    categories: [...new Set((categories.data ?? []).map((c) => c.category as string))].sort(),
-  };
+  return { divisions: divisions.data ?? [], landingCount: landing.count ?? 0 };
 }

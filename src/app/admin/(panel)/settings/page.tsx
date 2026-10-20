@@ -8,14 +8,12 @@ import { saveSettings, type SettingsColumn } from "@/lib/admin/actions/content";
 
 export const metadata: Metadata = { title: "Settings" };
 
-const SECTIONS: { column: SettingsColumn; title: string; text: string }[] = [
+const SECTIONS: { column: SettingsColumn; title: string; text: string; hide?: string[] }[] = [
   { column: "brand", title: "Brand", text: "Name, the three logo lines, tagline and belief." },
-  { column: "contact", title: "Contact details", text: "Address, phones, WhatsApp number (digits only), emails and hours, used across the site." },
-  { column: "nav", title: "Menu", text: "Links in the menu and footer." },
-  { column: "socials", title: "Social links", text: "" },
+  { column: "contact", title: "Contact details", text: "Address, phones, WhatsApp number (digits only), emails and hours, used across the site.", hide: ["map"] },
   { column: "hero_panels", title: "Landing hero photos", text: "The photos floating in the landing page hero." },
   { column: "trust_stats", title: "Landing figures", text: "The numbers that count up under the hero." },
-  { column: "quote_options", title: "Quote form choices", text: "Keep the first four divisions in the same order as the divisions, so each division page picks its own." },
+  { column: "quote_options", title: "Quote form choices", text: "Budget and timeline choices. The service choices come from Services.", hide: ["divisions"] },
 ];
 
 export default async function Settings() {
@@ -38,7 +36,7 @@ export default async function Settings() {
             <h2 className="font-serif text-2xl">{s.title}</h2>
             {s.text && <p className="mt-1 text-sm text-ink/60">{s.text}</p>}
             <ActionForm action={saveSettings.bind(null, s.column)} submit={`Save ${s.title.toLowerCase()}`} className="mt-5">
-              <JsonEditor name="value" value={data[s.column]} folder="site" />
+              <JsonEditor name="value" value={data[s.column]} folder="site" hide={s.hide} />
             </ActionForm>
           </section>
         ))}

@@ -10,18 +10,18 @@ export default async function Overview() {
     if (filter) q = q.eq(...filter);
     return (await q).count ?? 0;
   };
-  const [fresh, published, drafts, clients, latest] = await Promise.all([
+  const [fresh, published, onLanding, clients, latest] = await Promise.all([
     count("quote_requests", ["status", "new"]),
     count("projects", ["status", "published"]),
-    count("projects", ["status", "draft"]),
+    (async () => (await supabase.from("projects").select("*", { count: "exact", head: true }).not("featured_order", "is", null)).count ?? 0)(),
     count("clients"),
     supabase.from("quote_requests").select("id, name, division, created_at, status").order("created_at", { ascending: false }).limit(5),
   ]);
 
   const stats = [
     { label: "New quote requests", value: fresh, href: "/admin/requests?status=new" },
-    { label: "Published projects", value: published, href: "/admin/projects" },
-    { label: "Draft projects", value: drafts, href: "/admin/projects?status=draft" },
+    { label: "Projects", value: published, href: "/admin/projects" },
+    { label: "Projects on the landing page", value: onLanding, href: "/admin/projects?landing=1" },
     { label: "Clients", value: clients, href: "/admin/clients" },
   ];
 

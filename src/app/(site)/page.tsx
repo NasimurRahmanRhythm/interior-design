@@ -8,15 +8,17 @@ import Reach from "@/components/sections/Reach";
 import Clients from "@/components/sections/Clients";
 import Process from "@/components/sections/Process";
 import Contact from "@/components/sections/Contact";
-import { getContent, getCopy, getDivisions, getFeaturedProjects, getJourney, getMapPoints, getMarquee, getSettings } from "@/lib/db/queries";
+import { builds, finishes, processSteps } from "@/lib/content";
+import { COPY } from "@/lib/copy";
+import { getFeaturedDivisions, getFeaturedProjects, getJourney, getMapPoints, getMarquee, getQuote, getSettings } from "@/lib/db/queries";
 
 export default async function HomePage() {
-  const [settings, copy, content, journey, divisions, work, marquee, points] = await Promise.all([
+  const copy = COPY.home;
+  const [settings, quote, journey, divisions, work, marquee, points] = await Promise.all([
     getSettings(),
-    getCopy("home"),
-    getContent(),
+    getQuote(),
     getJourney(),
-    getDivisions(),
+    getFeaturedDivisions(),
     getFeaturedProjects(),
     getMarquee(),
     getMapPoints(),
@@ -27,13 +29,13 @@ export default async function HomePage() {
       <Hero belief={settings.brand.belief} panels={settings.heroPanels} copy={copy.hero} />
       <Trust trust={settings.trust} copy={copy.trust} />
       <Journey journey={journey} copy={copy.journey} />
-      <Divisions divisions={divisions} copy={copy.divisions} />
-      <BuildStudy builds={content.builds} finishes={content.finishes} copy={copy.build} />
-      <Work work={work} copy={copy.work} />
+      {divisions.length > 0 && <Divisions divisions={divisions} copy={copy.divisions} />}
+      <BuildStudy builds={builds} finishes={finishes} copy={copy.build} />
+      {work.length > 0 && <Work work={work} copy={copy.work} />}
       <Reach points={points} copy={copy.reach} />
       <Clients rows={marquee} copy={copy.clients} />
-      <Process steps={content.processSteps} copy={copy.process} />
-      <Contact contact={settings.contact} quote={settings.quote} copy={copy.contact} />
+      <Process steps={processSteps} copy={copy.process} />
+      <Contact contact={settings.contact} quote={quote} copy={copy.contact} />
     </>
   );
 }

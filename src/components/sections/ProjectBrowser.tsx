@@ -3,18 +3,25 @@ import ProjectCard from "../ProjectCard";
 import { paginate, pageList, withQuery } from "@/lib/paginate";
 import type { Copy, Project } from "@/lib/db/types";
 
-type Props = { projects: Project[]; copy: Copy; division?: string; category?: string; page?: string };
+type Props = {
+  projects: Project[];
+  services: { id: string; title: string }[];
+  copy: Copy;
+  division?: string;
+  category?: string;
+  page?: string;
+};
 
 // Division tabs, category links and a paged grid. Filtering and paging happen
 // on the server from the URL, so every state has its own link.
-export default function ProjectBrowser({ projects, copy, division, category, page }: Props) {
+export default function ProjectBrowser({ projects, services, copy, division, category, page }: Props) {
   const FILTERS: { id: string; label: string }[] = [
     { id: "all", label: copy.all },
-    ...Object.entries(copy.divisions as Record<string, string>).map(([id, label]) => ({ id, label })),
+    ...services.map((s) => ({ id: s.id, label: s.title })),
   ];
   const active = FILTERS.some((f) => f.id === division) ? division! : "all";
   const inDivision = active === "all" ? projects : projects.filter((p) => p.division === active);
-  const categories = [...new Set(inDivision.map((p) => p.category))];
+  const categories = [...new Set(inDivision.map((p) => p.category).filter(Boolean))];
   const cat = category && categories.includes(category) ? category : undefined;
   const filtered = cat ? inDivision.filter((p) => p.category === cat) : inDivision;
   const paging = paginate(filtered.length, page);

@@ -26,7 +26,7 @@ export default async function EditProject({ params, searchParams }: { params: Pr
 
   return (
     <>
-      <PageTitle title={project.title} text={created ? "Project created. Add its photos below, then publish it." : undefined}>
+      <PageTitle title={project.title} text={created ? "Project created. Add its photos below." : undefined}>
         {project.status === "published" && (
           <Link href={`/projects/${project.slug}`} target="_blank" className={ghost}>
             View on site ↗
@@ -36,7 +36,7 @@ export default async function EditProject({ params, searchParams }: { params: Pr
           Delete project
         </ConfirmButton>
       </PageTitle>
-      <ProjectForm project={project as ProjectRow} options={await projectOptions(supabase)} />
+      <ProjectForm project={project as ProjectRow} {...await projectOptions(supabase)} />
       <ProjectImages projectId={project.id} slug={project.slug} title={project.title} images={images} />
     </>
   );

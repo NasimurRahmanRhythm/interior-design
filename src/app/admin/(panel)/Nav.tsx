@@ -7,11 +7,10 @@ const LINKS = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/requests", label: "Quote requests" },
   { href: "/admin/projects", label: "Projects" },
-  { href: "/admin/divisions", label: "Divisions" },
+  { href: "/admin/services", label: "Services" },
   { href: "/admin/clients", label: "Clients" },
   { href: "/admin/journey", label: "Journey" },
   { href: "/admin/map", label: "Map" },
-  { href: "/admin/content", label: "Page content" },
   { href: "/admin/settings", label: "Settings" },
 ];
 

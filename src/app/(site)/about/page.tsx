@@ -9,21 +9,16 @@ import Journey from "@/components/sections/Journey";
 import ServiceWheel from "@/components/sections/ServiceWheel";
 import Trust from "@/components/sections/Trust";
 import { mediaUrl } from "@/lib/db/media";
-import { getContent, getCopy, getJourney, getSettings } from "@/lib/db/queries";
+import { about } from "@/lib/content";
+import { COPY } from "@/lib/copy";
+import { getJourney, getSettings } from "@/lib/db/queries";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const [{ meta }, { about }] = await Promise.all([getCopy("about"), getContent()]);
-  return { title: meta.title, description: about.lead };
-}
+export const metadata: Metadata = { title: COPY.about.meta.title, description: about.lead };
 
 export default async function AboutPage() {
-  const [settings, copy, home, { about }, journey] = await Promise.all([
-    getSettings(),
-    getCopy("about"),
-    getCopy("home"),
-    getContent(),
-    getJourney(),
-  ]);
+  const copy = COPY.about;
+  const home = COPY.home;
+  const [settings, journey] = await Promise.all([getSettings(), getJourney()]);
 
   return (
     <>

@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 import { requireAdmin } from "../auth";
-import { failed, json, lines, number, optional, text } from "../form";
+import { failed, json, number, optional, text } from "../form";
 import type { Result } from "../result";
 
 type Supabase = Awaited<ReturnType<typeof requireAdmin>>["supabase"];
@@ -24,56 +24,6 @@ async function replaceRows(supabase: Supabase, table: string, match: Record<stri
     if (error) return error;
   }
   return null;
-}
-
-const SCENES = ["stage", "stall", "room", "brand"];
-
-export async function saveDivision(id: string, _prev: Result, form: FormData): Promise<Result> {
-  const { supabase } = await requireAdmin();
-  const row = {
-    number: text(form, "number"),
-    name: text(form, "name"),
-    title_line1: text(form, "title_line1"),
-    title_line2: text(form, "title_line2"),
-    tagline: text(form, "tagline"),
-    intro: text(form, "intro"),
-    card_title: text(form, "card_title"),
-    card_short: text(form, "card_short"),
-    card_services: lines(form, "card_services"),
-    cover_image: json<string | null>(form, "cover_image") || null,
-    scene: SCENES.includes(text(form, "scene")) ? text(form, "scene") : "room",
-    extra_title: optional(form, "extra_title"),
-    extra_items: lines(form, "extra_items"),
-    sort_order: number(form, "sort_order") ?? 0,
-  };
-  for (const key of ["number", "name", "title_line1", "title_line2", "tagline", "intro", "card_title", "card_short"] as const) {
-    if (!row[key]) return { error: "Fill in every text field of the division." };
-  }
-  const { error } = await supabase.from("divisions").update(row).eq("id", id);
-  if (error) return failed(error);
-
-  const groups = json<{ title: string; items: string[] }[]>(form, "groups")
-    .map((g) => ({ title: g.title.trim(), items: g.items.map((s) => s.trim()).filter(Boolean) }))
-    .filter((g) => g.title);
-  const groupError = await replaceRows(
-    supabase,
-    "division_service_groups",
-    { division_id: id },
-    groups.map((g, i) => ({ division_id: id, title: g.title, items: g.items, sort_order: i }))
-  );
-  if (groupError) return failed(groupError);
-
-  const figures = json<{ value: string; label: string }[]>(form, "figures").filter((f) => f.value.trim() && f.label.trim());
-  const figureError = await replaceRows(
-    supabase,
-    "division_figures",
-    { division_id: id },
-    figures.map((f, i) => ({ division_id: id, value: f.value.trim(), label: f.label.trim(), sort_order: i }))
-  );
-  if (figureError) return failed(figureError);
-
-  refresh();
-  return { ok: true };
 }
 
 export async function saveClient(id: string | null, _prev: Result, form: FormData): Promise<Result> {

@@ -5,25 +5,23 @@ import ProjectCard from "@/components/ProjectCard";
 import SplitTitle from "@/components/SplitTitle";
 import Clients from "@/components/sections/Clients";
 import { fill } from "@/lib/db/fill";
-import { getClientGroups, getCopy, getMarquee, getProjects } from "@/lib/db/queries";
+import { COPY } from "@/lib/copy";
+import { getClientGroups, getMarquee, getProjects } from "@/lib/db/queries";
 import type { Project } from "@/lib/db/types";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { meta } = await getCopy("clients");
-  return { title: meta.title, description: meta.description };
-}
+export const metadata: Metadata = { title: COPY.clients.meta.title, description: COPY.clients.meta.description };
 
 export default async function ClientsPage() {
-  const [copy, home, groups, marquee, projects] = await Promise.all([
-    getCopy("clients"),
-    getCopy("home"),
+  const copy = COPY.clients;
+  const home = COPY.home;
+  const [groups, marquee, projects] = await Promise.all([
     getClientGroups(),
     getMarquee(),
     getProjects(),
   ]);
   const total = groups.reduce((n, g) => n + g.names.length, 0);
   // Programmes run for the same client more than once.
-  const repeat = (copy.repeat.projects as string[])
+  const repeat = copy.repeat.projects
     .map((slug) => projects.find((p) => p.slug === slug))
     .filter((p): p is Project => Boolean(p));
 

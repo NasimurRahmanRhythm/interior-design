@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import Contact from "@/components/sections/Contact";
-import { getCopy, getSettings } from "@/lib/db/queries";
+import { COPY } from "@/lib/copy";
+import { getQuote, getSettings } from "@/lib/db/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ meta, hero }, { contact }] = await Promise.all([getCopy("contact"), getSettings()]);
+  const { meta, hero } = COPY.contact;
+  const { contact } = await getSettings();
   return { title: meta.title, description: `${hero.label}. ${contact.address.join(", ")}. ${contact.phones.join(", ")}.` };
 }
 
 export default async function ContactPage() {
-  const [settings, copy, home] = await Promise.all([getSettings(), getCopy("contact"), getCopy("home")]);
+  const copy = COPY.contact;
+  const [settings, quote] = await Promise.all([getSettings(), getQuote()]);
   const { contact } = settings;
   const labels = copy.details.labels;
 
   return (
     <>
       <PageHero title={copy.hero.title} accent={copy.hero.accent} label={copy.hero.label} text={contact.response} />
-      <Contact contact={contact} quote={settings.quote} copy={home.contact} />
+      <Contact contact={contact} quote={quote} copy={COPY.home.contact} />
 
       <section data-theme="light" className="bg-bone py-20 text-ink lg:py-28">
         <div className="grid-w gap-y-12">

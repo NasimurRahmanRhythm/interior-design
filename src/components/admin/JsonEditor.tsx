@@ -43,20 +43,23 @@ const move = <T,>(list: T[], from: number, to: number) => {
   return next;
 };
 
-function Field({ k, value, onChange, folder }: { k: string; value: Json; onChange: (v: Json) => void; folder: string }) {
+type FieldProps = { k: string; value: Json; onChange: (v: Json) => void; folder: string; hide?: string[] };
+
+function Field({ k, value, onChange, folder, hide = [] }: FieldProps) {
   if (IMAGE_KEYS.has(k) && (value === null || typeof value === "string")) {
     return <ImageField value={value} onChange={onChange} folder={folder} />;
   }
-  if (Array.isArray(value)) return <List k={k} value={value} onChange={onChange} folder={folder} />;
+  if (Array.isArray(value)) return <List k={k} value={value} onChange={onChange} folder={folder} hide={hide} />;
   if (value && typeof value === "object") {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
         {Object.entries(value)
+          .filter(([key]) => !hide.includes(key))
           .sort(([a], [b]) => rank(a) - rank(b))
           .map(([key, v]) => (
           <div key={key} className={Array.isArray(v) || (v && typeof v === "object") || LONG_KEYS.test(key) ? "sm:col-span-2" : ""}>
             <span className={label}>{human(key)}</span>
-            <Field k={key} value={v} folder={folder} onChange={(next) => onChange({ ...value, [key]: next })} />
+            <Field k={key} value={v} folder={folder} hide={hide} onChange={(next) => onChange({ ...value, [key]: next })} />
           </div>
           ))}
       </div>
@@ -75,7 +78,7 @@ function Field({ k, value, onChange, folder }: { k: string; value: Json; onChang
   return <input value={text} onChange={(e) => onChange(e.target.value)} className={input} />;
 }
 
-function List({ k, value, onChange, folder }: { k: string; value: Json[]; onChange: (v: Json) => void; folder: string }) {
+function List({ k, value, onChange, folder, hide }: Omit<FieldProps, "value"> & { value: Json[] }) {
   const fixed = FIXED_KEYS.has(k) && value.every((v) => typeof v !== "object");
   const objects = value.some((v) => v && typeof v === "object");
   const template: Json = value.length ? blank(value[value.length - 1]) : "";
@@ -86,7 +89,7 @@ function List({ k, value, onChange, folder }: { k: string; value: Json[]; onChan
         <div key={i} className={objects ? "rounded-sm border border-ink/10 bg-bone/60 p-4" : "flex items-start gap-2"}>
           {objects && <p className="t-label mb-3 text-ink/40">{i + 1}</p>}
           <div className={objects ? "" : "flex-1"}>
-            <Field k={k} value={item} folder={folder} onChange={(v) => onChange(value.map((x, j) => (j === i ? v : x)))} />
+            <Field k={k} value={item} folder={folder} hide={hide} onChange={(v) => onChange(value.map((x, j) => (j === i ? v : x)))} />
           </div>
           {!fixed && (
             <div className={`flex gap-1 ${objects ? "mt-3" : ""}`}>
@@ -112,13 +115,15 @@ function List({ k, value, onChange, folder }: { k: string; value: Json[]; onChan
   );
 }
 
-// Edits stored JSON (page copy, settings, lists) as a form with the same shape,
-// and sends it as one hidden field.
-export default function JsonEditor({ name, value, folder = "uploads", k = "" }: { name: string; value: unknown; folder?: string; k?: string }) {
+type Props = { name: string; value: unknown; folder?: string; k?: string; hide?: string[] };
+
+// Edits stored JSON (settings, lists) as a form with the same shape, and sends it
+// as one hidden field. Keys in `hide` are kept as they are but not shown.
+export default function JsonEditor({ name, value, folder = "uploads", k = "", hide }: Props) {
   const [state, setState] = useState<Json>(value as Json);
   return (
     <>
-      <Field k={k} value={state} onChange={setState} folder={folder} />
+      <Field k={k} value={state} onChange={setState} folder={folder} hide={hide} />
       <input type="hidden" name={name} value={JSON.stringify(state)} />
     </>
   );

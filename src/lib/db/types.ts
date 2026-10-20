@@ -51,11 +51,14 @@ export type Division = {
   title: [string, string];
   line: string;
   intro: string;
-  scene: SceneKind;
+  // The 3D scene on the service page; services added later show their cover photo instead.
+  scene: SceneKind | null;
   card: { title: string; short: string; services: string[]; image: string };
   groups: { title: string; items: string[] }[];
   figures: { value: string; label: string }[];
   extra?: { title: string; items: string[] };
+  // Position on the landing page ring; null when not shown there.
+  featuredOrder: number | null;
 };
 
 export type Client = { name: string; industry: string | null; marqueeRow: number | null };
@@ -79,14 +82,6 @@ export type About = {
   why: Step[];
   values: string[];
   wheel: string[];
-};
-
-export type Content = {
-  about: About;
-  processSteps: Step[];
-  processDetail: Step[];
-  builds: Build[];
-  finishes: Finish[];
 };
 
 // Page copy is stored per section as JSON; each section reads the fields it needs.

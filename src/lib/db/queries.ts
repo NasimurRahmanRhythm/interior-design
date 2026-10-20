@@ -2,7 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { db } from "./client";
 import { mediaUrl } from "./media";
-import type { Client, Content, Copy, Division, MapPoint, Milestone, Project, Settings } from "./types";
+import { COPY } from "@/lib/copy";
+import type { Client, Division, MapPoint, Milestone, Project, Settings } from "./types";
 
 function check<T>({ data, error }: { data: T; error: { message: string } | null }, what: string): NonNullable<T> {
   if (error || data === null) throw new Error(`Could not load ${what}: ${error?.message ?? "no rows"}`);
@@ -20,28 +21,6 @@ export const getSettings = cache(async (): Promise<Settings> => {
     heroPanels: s.hero_panels.map((p: { image: string; alt: string }) => ({ image: mediaUrl(p.image), alt: p.alt })),
     quote: s.quote_options,
   };
-});
-
-const getAllCopy = cache(async (): Promise<Record<string, Copy>> => {
-  const rows = check(await (await db()).from("page_content").select("key, content"), "page content");
-  return Object.fromEntries(rows.map((r: { key: string; content: Copy }) => [r.key, r.content]));
-});
-
-// Copy for one page, keyed by section: getCopy("home") -> { hero, trust, ... }
-export async function getCopy(page: string): Promise<Record<string, Copy>> {
-  const all = await getAllCopy();
-  const prefix = `${page}.`;
-  return Object.fromEntries(
-    Object.entries(all)
-      .filter(([k]) => k.startsWith(prefix))
-      .map(([k, v]) => [k.slice(prefix.length), v])
-  );
-}
-
-export const getContent = cache(async (): Promise<Content> => {
-  const rows = check(await (await db()).from("content_blocks").select("key, content"), "content blocks");
-  const b: Record<string, any> = Object.fromEntries(rows.map((r: { key: string; content: unknown }) => [r.key, r.content]));
-  return { about: b.about, processSteps: b.process_steps, processDetail: b.process_detail, builds: b.builds, finishes: b.finishes };
 });
 
 export const getDivisions = cache(async (): Promise<Division[]> => {
@@ -65,8 +44,21 @@ export const getDivisions = cache(async (): Promise<Division[]> => {
     groups: [...d.division_service_groups].sort(bySort).map((g) => ({ title: g.title, items: g.items })),
     figures: [...d.division_figures].sort(bySort).map((f) => ({ value: f.value, label: f.label })),
     extra: d.extra_title ? { title: d.extra_title, items: d.extra_items } : undefined,
+    featuredOrder: d.featured_order,
   }));
 });
+
+// Landing page limits for "Show on landing page" in the admin.
+export const LANDING_SERVICES = 5;
+export const LANDING_PROJECTS = 7;
+
+// The services on the landing page ring, in their landing order.
+export async function getFeaturedDivisions() {
+  return (await getDivisions())
+    .filter((d) => d.featuredOrder !== null)
+    .sort((a, b) => (a.featuredOrder ?? 0) - (b.featuredOrder ?? 0))
+    .slice(0, LANDING_SERVICES);
+}
 
 export async function getDivision(id: string) {
   return (await getDivisions()).find((d) => d.id === id);
@@ -104,7 +96,7 @@ export async function getProject(slug: string) {
 
 export async function getFeaturedProjects() {
   const rows = check(
-    await (await db()).from("projects").select(PROJECT_FIELDS).not("featured_order", "is", null).order("featured_order"),
+    await (await db()).from("projects").select(PROJECT_FIELDS).not("featured_order", "is", null).order("featured_order").limit(LANDING_PROJECTS),
     "featured projects"
   );
   return rows.map(toProject);
@@ -161,3 +153,9 @@ export const getMapPoints = cache(async (): Promise<MapPoint[]> => {
   const rows = check(await (await db()).from("map_points").select("id, title, lat, lon").order("created_at"), "map points");
   return rows as MapPoint[];
 });
+
+// Choices for the quote form: the services, then budgets and timelines from settings.
+export async function getQuote(): Promise<Settings["quote"]> {
+  const [settings, divisions] = await Promise.all([getSettings(), getDivisions()]);
+  return { ...settings.quote, divisions: [...divisions.map((d) => d.card.title), COPY.home.contact.not_sure] };
+}

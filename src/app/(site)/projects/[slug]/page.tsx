@@ -8,7 +8,8 @@ import RevealText from "@/components/RevealText";
 import SplitTitle from "@/components/SplitTitle";
 import Gallery from "@/components/sections/Gallery";
 import { fill } from "@/lib/db/fill";
-import { getCopy, getDivision, getProject, getProjects, getSettings } from "@/lib/db/queries";
+import { COPY } from "@/lib/copy";
+import { getDivision, getProject, getProjects, getSettings } from "@/lib/db/queries";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
-  const [projects, copy] = await Promise.all([getProjects(), getCopy("project")]);
+  const projects = await getProjects();
+  const copy = COPY.project;
   const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
 
