@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import PageHero from "@/components/PageHero";
 import Contact from "@/components/sections/Contact";
 import ProjectBrowser from "@/components/sections/ProjectBrowser";
@@ -11,7 +10,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: meta.title, description: meta.description };
 }
 
-export default async function ProjectsPage() {
+type Search = { division?: string; category?: string; page?: string };
+
+export default async function ProjectsPage({ searchParams }: { searchParams: Promise<Search> }) {
+  const { division, category, page } = await searchParams;
   const [settings, copy, home, projects] = await Promise.all([getSettings(), getCopy("projects"), getCopy("home"), getProjects()]);
 
   return (
@@ -22,9 +24,7 @@ export default async function ProjectsPage() {
         label={fill(copy.hero.label, { count: projects.length })}
         text={copy.hero.text}
       />
-      <Suspense>
-        <ProjectBrowser projects={projects} copy={copy.filters} />
-      </Suspense>
+      <ProjectBrowser projects={projects} copy={copy.filters} division={division} category={category} page={page} />
       <Contact contact={settings.contact} quote={settings.quote} copy={home.contact} />
     </>
   );
