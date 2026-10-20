@@ -20,7 +20,7 @@ export default function ImageField({ value, onChange, folder = "uploads", contai
         {value && <img src={mediaUrl(value)} alt="" className={`h-full w-full ${contain ? "object-contain p-2" : "object-cover"}`} />}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-xs text-ink/60">{value || "No image"}</p>
+        {!value && <p className="text-xs text-ink/60">No image</p>}
         <div className="mt-2 flex flex-wrap gap-2">
           <button type="button" className={ghost} disabled={busy} onClick={() => file.current?.click()}>
             {busy ? "Uploading…" : value ? "Replace" : "Upload"}
