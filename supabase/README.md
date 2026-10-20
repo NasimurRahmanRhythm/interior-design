@@ -1,11 +1,12 @@
 # Database (Supabase)
 
-Two migrations build the database and fill it with everything the site shows today:
+Three migrations build the database and fill it with everything the site shows today:
 
 | File | What it does |
 |---|---|
 | `migrations/20261019120000_schema.sql` | Tables, the `admins` list and `is_admin()`, row level security, grants, and the public `media` storage bucket with its policies. |
 | `migrations/20261019120100_seed_content.sql` | All site content: settings, contact details, page copy, divisions, 123 projects and their 160 photos, 83 clients, the journey, process steps, 3D build steps and finishes. |
+| `migrations/20261019130000_quote_form_copy.sql` | Confirmation copy for the quote form, which now saves requests to `quote_requests`. |
 
 Photos are files, so SQL cannot carry them: `scripts/upload-media.mjs` copies `public/images/**` into the
 `media` bucket under the same paths the seed points to (e.g. `projects/yolo-fest/1.jpg`).
@@ -28,13 +29,11 @@ Photos are files, so SQL cannot carry them: `scripts/upload-media.mjs` copies `p
    then `npm run upload-media` (or `npm run upload-media -- --dry-run` to see the list first).
    Running it again replaces files, so it is safe to repeat.
 
-3. **Make yourself admin** — Authentication → Users → **Add user** (email + password), copy the user's ID, then in the SQL Editor:
-
-   ```sql
-   insert into public.admins (user_id) values ('<user id>');
-   ```
+3. **Admin panel** — it is open at `/admin` for now, without a sign-in. It saves with the secret key, so set
+   `SUPABASE_SECRET_KEY` in Vercel (Production and Preview; not `NEXT_PUBLIC_`) as well as `.env.local`.
 
 ## Who can do what
 
 - Anyone: read settings, page copy, divisions, clients, journey, team, published projects and their photos, approved testimonials; send a quote request (but not read requests back).
 - Admins (rows in `public.admins`): read and change everything, including drafts and quote requests, and upload or delete files in `media`.
+- The admin panel uses the secret key on the server, which bypasses these rules; while it has no sign-in, anyone who opens `/admin` can use it.
