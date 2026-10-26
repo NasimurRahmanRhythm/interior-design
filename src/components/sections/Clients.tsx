@@ -12,7 +12,7 @@ export default function Clients({ rows, copy }: { rows: Logo[][]; copy: Copy }) 
           <RevealText as="span" className="block">
             {copy.title[0]}
           </RevealText>
-          <RevealText as="span" className="block italic" delay={0.1}>
+          <RevealText as="span" className="block" delay={0.1}>
             {copy.title[1]}
           </RevealText>
         </h2>

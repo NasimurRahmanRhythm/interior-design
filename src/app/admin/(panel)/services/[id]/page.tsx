@@ -7,15 +7,17 @@ import { ghost } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/admin/auth";
 import { deleteService } from "@/lib/admin/actions/services";
 import ServiceForm, { type ServiceRow } from "../ServiceForm";
+import SectionsEditor from "@/components/admin/SectionsEditor";
 
 export const metadata: Metadata = { title: "Edit service" };
 
 export default async function EditService({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const { id } = await params;
   const { supabase } = await requireAdmin();
-  const [{ data: s }, { count }] = await Promise.all([
+  const [{ data: s }, { count }, { data: sections }] = await Promise.all([
     supabase.from("divisions").select("id, name, card_short, cover_image, featured_order").eq("id", id).maybeSingle(),
     supabase.from("divisions").select("id", { count: "exact", head: true }).not("featured_order", "is", null),
+    supabase.from("division_sections").select("id, title, description, image_path").eq("division_id", id).order("sort_order"),
   ]);
   if (!s) notFound();
 
@@ -35,6 +37,7 @@ export default async function EditService({ params, searchParams }: { params: Pr
           </ConfirmButton>
         }
       />
+      <SectionsEditor kind="service" parentId={s.id} sections={sections ?? []} folder={`services/${s.id}`} />
     </>
   );
 }

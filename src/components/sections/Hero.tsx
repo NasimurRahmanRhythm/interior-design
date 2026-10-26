@@ -4,32 +4,34 @@ import { useRef } from "react";
 import dynamic from "next/dynamic";
 import Button from "../Button";
 import SplitTitle from "../SplitTitle";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { onReady } from "@/lib/ready";
-import type { Copy, Settings } from "@/lib/db/types";
+import type { Copy } from "@/lib/db/types";
 
-const HeroPanels = dynamic(() => import("../three/HeroPanels"), { ssr: false });
+const BrandScene = dynamic(() => import("../three/BrandScene"), { ssr: false });
 
-const LINE = "block font-display text-[clamp(3.6rem,9.4vw,10rem)] leading-[0.86] tracking-[-0.04em]";
+// Phones get a smaller size so the widest line ("for your Brand,") stays on screen.
+const LINE = "block font-display text-[10.5vw] leading-[0.9] tracking-[-0.04em] lg:text-[clamp(3.6rem,9.4vw,10rem)]";
 
-type Props = { belief: string; panels: Settings["heroPanels"]; copy: Copy };
+type Props = { belief: string; copy: Copy };
 
-export default function Hero({ belief, panels, copy }: Props) {
+export default function Hero({ belief, copy }: Props) {
   const lines: string[] = copy.lines;
   const root = useRef<HTMLElement>(null);
-  const progress = useRef(0);
 
   useGSAP(
     () => {
       const scroll = { trigger: root.current, start: "top top", end: "bottom bottom", scrub: true };
 
-      ScrollTrigger.create({ ...scroll, onUpdate: (self) => (progress.current = self.progress) });
-
-      // The four lines drift apart while the photos spread behind them.
-      gsap.to(".hero-l1", { xPercent: -14, ease: "none", scrollTrigger: scroll });
-      gsap.to(".hero-l2", { xPercent: 10, ease: "none", scrollTrigger: scroll });
-      gsap.to(".hero-l3", { xPercent: -8, ease: "none", scrollTrigger: scroll });
-      gsap.to(".hero-l4", { xPercent: 12, ease: "none", scrollTrigger: scroll });
+      // The four lines drift apart as the page scrolls.
+      // Only on wide screens: on a phone the drift would push the lines off the edge.
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px)", () => {
+        gsap.to(".hero-l1", { xPercent: -14, ease: "none", scrollTrigger: scroll });
+        gsap.to(".hero-l2", { xPercent: 10, ease: "none", scrollTrigger: scroll });
+        gsap.to(".hero-l3", { xPercent: -8, ease: "none", scrollTrigger: scroll });
+        gsap.to(".hero-l4", { xPercent: 12, ease: "none", scrollTrigger: scroll });
+      });
       gsap.to(".hero-meta", { opacity: 0, ease: "none", scrollTrigger: { ...scroll, end: "40% bottom" } });
 
       const intro = gsap.from(".hero-in", {
@@ -54,14 +56,15 @@ export default function Hero({ belief, panels, copy }: Props) {
           style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(123,81,54,0.26), transparent 60%)" }}
         />
 
-        <HeroPanels panels={panels} progress={progress} className="pointer-events-none absolute inset-0" />
+        {/* The print and promo pieces from the brand division float behind the headline; drag to turn them. */}
+        <BrandScene className="absolute inset-x-0 top-[8svh] h-[52svh] lg:inset-y-0 lg:left-[50%] lg:right-0 lg:top-0 lg:h-auto" />
 
         <h1 className="pointer-events-none absolute inset-x-0 bottom-[22svh] z-10 px-[var(--margin)] lg:bottom-auto lg:top-[22svh]">
           <span className="hero-l1 block">
             <SplitTitle text={lines[0]} className={LINE} when="ready" />
           </span>
           <span className="hero-l2 ml-[0.5em] block lg:ml-[1.1em]">
-            <SplitTitle text={lines[1]} className={`${LINE} font-serif italic`} when="ready" delay={0.1} />
+            <SplitTitle text={lines[1]} className={LINE} when="ready" delay={0.1} />
           </span>
           <span className="hero-l3 block">
             <SplitTitle text={lines[2]} className={LINE} when="ready" delay={0.2} />
@@ -75,7 +78,7 @@ export default function Hero({ belief, panels, copy }: Props) {
           <div className="hero-in absolute bottom-[4svh] left-[var(--margin)] right-[var(--margin)] flex items-end justify-between gap-6">
             <div>
               <p className="t-label mb-1 opacity-50">{copy.belief_label}</p>
-              <p className="t-h5 italic">{belief}.</p>
+              <p className="t-h5">{belief}.</p>
             </div>
             <p className="t-label hidden opacity-70 lg:block">{copy.hint}</p>
             <div className="flex items-end gap-6 pr-16 lg:pr-20">

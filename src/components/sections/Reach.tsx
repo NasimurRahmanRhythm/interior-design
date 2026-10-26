@@ -4,15 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import RevealText from "../RevealText";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { BD_PATH, BD_VIEWBOX, CITIES, project } from "@/lib/bangladesh";
-import type { Copy, MapPoint } from "@/lib/db/types";
+import type { Copy, MapPoint, Settings } from "@/lib/db/types";
 
-type Figure = { value: string; unit: string; text: string };
+type Props = { points: MapPoint[]; figures: Settings["mapFigures"]; copy: Copy };
 
-export default function Reach({ points, copy }: { points: MapPoint[]; copy: Copy }) {
+export default function Reach({ points, figures, copy }: Props) {
   const root = useRef<HTMLElement>(null);
   // The point whose title is showing: hovered, focused or tapped.
+  // A click opens the place in Google Maps; on touch screens the first tap shows the title.
   const [open, setOpen] = useState<string | null>(null);
-  const figures: Figure[] = copy.figures ?? [];
+  const pointer = useRef("mouse");
 
   // A tap anywhere else closes the title on touch screens.
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function Reach({ points, copy }: { points: MapPoint[]; copy: Copy
             <div key={`${f.value}${f.unit}`} className={i ? "mt-8" : ""}>
               <p className="flex items-baseline gap-4">
                 <span className="font-display text-[clamp(5rem,11vw,10rem)] leading-[0.85] tracking-[-0.045em]">{f.value}</span>
-                <span className="t-h1 italic">{f.unit}</span>
+                <span className="t-h1">{f.unit}</span>
               </p>
               <RevealText className="mt-3 max-w-sm text-sm leading-relaxed opacity-70">{f.text}</RevealText>
             </div>
@@ -79,20 +80,26 @@ export default function Reach({ points, copy }: { points: MapPoint[]; copy: Copy
                 const shown = open === p.id;
                 return (
                   <li key={p.id} className="absolute" style={{ left: `${left}%`, top: `${top}%`, zIndex: shown ? 20 : 10 }}>
-                    <button
-                      type="button"
-                      aria-label={p.title}
-                      aria-expanded={shown}
-                      // Hover with a mouse, focus with the keyboard, tap on touch screens.
+                    <a
+                      href={p.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${p.title} — open in Google Maps`}
+                      onPointerDown={(e) => (pointer.current = e.pointerType)}
                       onPointerEnter={(e) => e.pointerType === "mouse" && setOpen(p.id)}
                       onFocus={(e) => e.currentTarget.matches(":focus-visible") && setOpen(p.id)}
                       onBlur={() => setOpen((o) => (o === p.id ? null : o))}
-                      onClick={() => setOpen((o) => (o === p.id ? null : p.id))}
-                      className="reach-pin group absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+                      onClick={(e) => {
+                        if (pointer.current !== "mouse" && open !== p.id) {
+                          e.preventDefault();
+                          setOpen(p.id);
+                        }
+                      }}
+                      className="reach-pin group absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
                     >
                       <span className={`absolute h-full w-full rounded-full bg-umber/20 transition-transform duration-500 ${shown ? "scale-150" : "scale-100"}`} />
                       <span className="relative h-2.5 w-2.5 rounded-full bg-umber ring-2 ring-bone" />
-                    </button>
+                    </a>
                     <span
                       role="tooltip"
                       className={`pointer-events-none absolute bottom-4 w-max max-w-[min(16rem,60vw)] rounded-sm bg-ink px-3 py-2 text-xs leading-snug text-bone shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-[opacity,translate] duration-300 ${
@@ -100,6 +107,7 @@ export default function Reach({ points, copy }: { points: MapPoint[]; copy: Copy
                       } ${shown ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"}`}
                     >
                       {p.title}
+                      <span className="mt-1 block text-[0.65rem] uppercase tracking-[0.06em] text-bone/60">Click to open the map ↗</span>
                     </span>
                   </li>
                 );

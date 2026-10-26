@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
@@ -74,13 +75,9 @@ export default function Header({ brand, contact, nav, copy }: Props) {
           <Link
             href="/"
             aria-label={`${brand.name} — home`}
-            className="pointer-events-auto col-span-3 flex flex-col justify-self-start font-serif text-[1.35rem] leading-[0.85] lg:col-span-2 lg:text-[1.55rem]"
+            className="pointer-events-auto col-span-3 justify-self-start lg:col-span-2"
           >
-            {brand.lines.map((line, i) => (
-              <span key={line} style={{ marginLeft: `${[0.85, 0, 1][i]}em` }}>
-                {line}
-              </span>
-            ))}
+            <Image src="/images/logo-mark.png" alt="" width={512} height={512} priority className="h-11 w-auto lg:h-14" />
           </Link>
 
           <span className="hidden h-8 w-px justify-self-center bg-current opacity-30 lg:col-start-4 lg:block" />

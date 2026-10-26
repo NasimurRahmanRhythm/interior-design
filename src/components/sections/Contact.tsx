@@ -50,9 +50,9 @@ export default function Contact({ contact, quote, copy, division }: Props) {
           <p className="t-label opacity-60">{copy.eyebrow}</p>
           <h2 className="mt-4 flex flex-col">
             <SplitTitle text={copy.title[0]} className="t-lrg" />
-            <span className="flex flex-wrap items-baseline gap-x-[0.25em]">
+            <span className="flex flex-wrap items-baseline">
               <SplitTitle text={copy.title[1]} className="t-lrg" delay={0.08} />
-              <SplitTitle text={copy.title[2]} className="t-lrg font-serif italic text-[#c9a07f]" delay={0.16} />
+              <SplitTitle text={copy.title[2]} className="t-lrg text-[#c9a07f]" delay={0.16} />
             </span>
           </h2>
         </div>
@@ -64,9 +64,12 @@ export default function Contact({ contact, quote, copy, division }: Props) {
         <div className="col-span-6 grid grid-cols-2 content-start gap-x-[var(--gap)] gap-y-8 text-sm lg:col-span-4 lg:col-start-9">
           <div className="col-span-2">
             <p className="t-label mb-2 opacity-50">{copy.labels.office}</p>
-            <RevealText className="leading-relaxed opacity-85">
-              {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
-            </RevealText>
+            <a href={contact.map} target="_blank" rel="noreferrer" className="group block w-fit" aria-label="Open our office in Google Maps">
+              <RevealText className="leading-relaxed opacity-85 transition-opacity group-hover:opacity-100">
+                {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
+              </RevealText>
+              <span className="t-label link-u mt-2 inline-block opacity-70">Open in Google Maps ↗</span>
+            </a>
           </div>
           <div>
             <p className="t-label mb-2 opacity-50">{copy.labels.call}</p>

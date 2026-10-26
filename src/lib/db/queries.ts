@@ -3,7 +3,8 @@ import { cache } from "react";
 import { db } from "./client";
 import { mediaUrl } from "./media";
 import { COPY } from "@/lib/copy";
-import type { Client, Division, MapPoint, Milestone, Project, Settings } from "./types";
+import { cleanHtml, excerpt } from "@/lib/richtext";
+import type { Appreciation, Client, Division, MapPoint, Milestone, Post, Project, Settings, Subsection } from "./types";
 
 function check<T>({ data, error }: { data: T; error: { message: string } | null }, what: string): NonNullable<T> {
   if (error || data === null) throw new Error(`Could not load ${what}: ${error?.message ?? "no rows"}`);
@@ -18,7 +19,7 @@ export const getSettings = cache(async (): Promise<Settings> => {
     socials: s.socials,
     nav: s.nav,
     trust: s.trust_stats,
-    heroPanels: s.hero_panels.map((p: { image: string; alt: string }) => ({ image: mediaUrl(p.image), alt: p.alt })),
+    mapFigures: s.reach?.figures ?? [],
     quote: s.quote_options,
   };
 });
@@ -142,7 +143,7 @@ export const getJourney = cache(async (): Promise<Milestone[]> => {
 });
 
 export const getMapPoints = cache(async (): Promise<MapPoint[]> => {
-  const rows = check(await (await db()).from("map_points").select("id, title, lat, lon").order("created_at"), "map points");
+  const rows = check(await (await db()).from("map_points").select("id, title, link, lat, lon").order("created_at"), "map points");
   return rows as MapPoint[];
 });
 
@@ -150,4 +151,62 @@ export const getMapPoints = cache(async (): Promise<MapPoint[]> => {
 export async function getQuote(): Promise<Settings["quote"]> {
   const [settings, divisions] = await Promise.all([getSettings(), getDivisions()]);
   return { ...settings.quote, divisions: [...divisions.map((d) => d.card.title), COPY.home.contact.not_sure] };
+}
+
+type PostRow = { slug: string; title: string; body: string; image_path: string | null; created_at: string };
+const toPost = (p: PostRow): Post => ({
+  slug: p.slug,
+  title: p.title,
+  body: cleanHtml(p.body),
+  image: mediaUrl(p.image_path),
+  date: p.created_at,
+  excerpt: excerpt(p.body),
+});
+
+// Newest first.
+export const getPosts = cache(async (): Promise<Post[]> => {
+  const rows = check(
+    await (await db()).from("blog_posts").select("slug, title, body, image_path, created_at").order("created_at", { ascending: false }),
+    "blog posts"
+  );
+  return rows.map(toPost);
+});
+
+export async function getPost(slug: string) {
+  return (await getPosts()).find((p) => p.slug === slug);
+}
+
+export const getAppreciations = cache(async (): Promise<Appreciation[]> => {
+  const rows = check(
+    await (await db()).from("appreciations").select("id, title, body, image_path").order("created_at", { ascending: false }),
+    "client appreciation"
+  );
+  return rows.map((a: { id: string; title: string; body: string; image_path: string | null }) => ({
+    id: a.id,
+    title: a.title,
+    body: cleanHtml(a.body),
+    image: mediaUrl(a.image_path),
+  }));
+});
+
+type SectionRow = { title: string; description: string; image_path: string | null; sort_order: number };
+const toSections = (rows: SectionRow[]): Subsection[] =>
+  [...rows]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((r) => ({ title: r.title, description: r.description, image: mediaUrl(r.image_path) }));
+
+export async function getProjectSections(slug: string): Promise<Subsection[]> {
+  const rows = check(
+    await (await db()).from("project_sections").select("title, description, image_path, sort_order, projects!inner(slug)").eq("projects.slug", slug),
+    "project sections"
+  );
+  return toSections(rows as SectionRow[]);
+}
+
+export async function getDivisionSections(id: string): Promise<Subsection[]> {
+  const rows = check(
+    await (await db()).from("division_sections").select("title, description, image_path, sort_order").eq("division_id", id),
+    "service sections"
+  );
+  return toSections(rows as SectionRow[]);
 }

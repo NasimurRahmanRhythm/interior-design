@@ -9,7 +9,7 @@ export default function ProjectModel({ url, title }: { url: string; title: strin
     <section data-theme="dark" className="bg-ink pb-10 pt-20 text-bone lg:pt-28">
       <div className="grid-w items-end gap-y-4">
         <h2 className="t-h1 col-span-6 lg:col-span-8">
-          In <span className="italic">3D</span>
+          In <span>3D</span>
         </h2>
         <p className="t-label col-span-6 opacity-60 lg:col-span-4 lg:justify-self-end">Drag to turn the model</p>
       </div>

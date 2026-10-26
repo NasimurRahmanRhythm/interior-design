@@ -13,19 +13,21 @@ export const metadata: Metadata = { title: COPY.home.meta.title, description: CO
 // The public site: smooth scroll, preloader, header and footer around every page.
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSettings();
+  // The blog came after the menu was set up, so it is added here when missing.
+  const nav = settings.nav.some((l) => l.href === "/blog") ? settings.nav : [...settings.nav, { label: "Blog", href: "/blog" }];
   const global = COPY.global;
 
   return (
     <SmoothScroll>
       <Preloader brand={settings.brand} />
       <Cursor />
-      <Header brand={settings.brand} contact={settings.contact} nav={settings.nav} copy={global.header} />
+      <Header brand={settings.brand} contact={settings.contact} nav={nav} copy={global.header} />
       <main>{children}</main>
       <Footer
         brand={settings.brand}
         contact={settings.contact}
         socials={settings.socials}
-        nav={settings.nav}
+        nav={nav}
         copy={global.footer}
       />
       <WhatsAppButton number={settings.contact.whatsapp} />

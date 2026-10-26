@@ -28,11 +28,7 @@ export const COPY = {
         reach: "Reach",
         follow: "Follow",
         office: "Office"
-      },
-      wordmark: [
-        "Integrity",
-        "360 Degree"
-      ]
+      }
     }
   },
   home: {
@@ -84,6 +80,31 @@ export const COPY = {
       eyebrow: "3D Study — Scroll to build, drag to rotate",
       finish_label: "Finish"
     },
+    who: {
+      eyebrow: "Who we are",
+      title: ["One partner,", "every side of the brief"],
+      services_label: "What we do",
+      more: "To see more of our services,",
+      more_link: "click here"
+    },
+    appreciation: {
+      eyebrow: "Client appreciation",
+      title: ["In our", "clients' words"],
+      more: "Read more",
+      less: "Show less"
+    },
+    blog: {
+      eyebrow: "From the blog",
+      title: ["News &", "notes"],
+      all: "All posts",
+      read: "Read"
+    },
+    demo: {
+      eyebrow: "Demo work",
+      title: ["See our work", "in 3D"],
+      text: "A stall, an office and an event stage, built piece by piece as you scroll. Drag to turn them and switch the finishes.",
+      cta: "See our demo work"
+    },
     work: {
       cta: {
         href: "/projects",
@@ -96,19 +117,7 @@ export const COPY = {
     },
     reach: {
       note: "Pins mark venues named in our project records",
-      eyebrow: "Across the country",
-      figures: [
-        {
-          text: "OK Mobile Ramadan & Eid activation in 18 shopping malls and 6 recreation points.",
-          unit: "malls",
-          value: "18"
-        },
-        {
-          text: "Elite Paint dealer meet covered by 20+ newspapers and 10 TV channels.",
-          unit: "newspapers",
-          value: "20+"
-        }
-      ]
+      eyebrow: "Across the country"
     },
     clients: {
       title: [
@@ -267,6 +276,32 @@ export const COPY = {
       all: "All",
       every_category: "Every category"
     }
+  },
+  demo: {
+    meta: {
+      title: "Demo work — Integrity 360 Degree",
+      description: "A stall, an office and an event stage built in 3D, step by step."
+    },
+    hero: {
+      title: "Demo",
+      accent: "work in 3D",
+      label: "Scroll to build, drag to rotate",
+      text: "Three of the things we build most, assembled the way our workshop and crew put them together."
+    }
+  },
+  blog: {
+    meta: {
+      title: "Blog — Integrity 360 Degree",
+      description: "News, stories and notes from our events, exhibitions, interiors and campaigns."
+    },
+    hero: {
+      title: "Blog",
+      accent: "News & notes",
+      label: "{count} posts",
+      text: "Stories from our events, exhibitions, interiors and campaigns."
+    },
+    back: "All posts",
+    empty: "No posts yet."
   },
   project: {
     page: {

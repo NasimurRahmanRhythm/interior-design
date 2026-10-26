@@ -51,11 +51,20 @@ export default function SplitTitle({ text, className = "", when = "scroll", dela
   return (
     <span ref={root} className={`split-word ${className}`}>
       <span className="sr-only">{text}</span>
-      {text.split("").map((char, i) => (
-        <span key={i} className="split-mask" aria-hidden="true">
-          <span className="split-char">{char}</span>
-        </span>
-      ))}
+      {/* Words stay whole and the title wraps between them on narrow screens. */}
+      {text.split(/(\s+)/).map((word, w) =>
+        /^\s+$/.test(word) ? (
+          " "
+        ) : (
+          <span key={w} className="split-group" aria-hidden="true">
+            {word.split("").map((char, i) => (
+              <span key={i} className="split-mask">
+                <span className="split-char">{char}</span>
+              </span>
+            ))}
+          </span>
+        )
+      )}
     </span>
   );
 }

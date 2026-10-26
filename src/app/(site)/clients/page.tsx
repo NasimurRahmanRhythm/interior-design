@@ -56,9 +56,9 @@ export default async function ClientsPage() {
 
       <section data-theme="dark" className="bg-ink py-24 text-bone lg:py-36">
         <div className="grid-w items-end gap-y-6">
-          <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-9">
+          <h2 className="col-span-6 flex flex-wrap items-baseline lg:col-span-9">
             <SplitTitle text={copy.repeat.title[0]} className="t-lrg" />
-            <SplitTitle text={copy.repeat.title[1]} className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={copy.repeat.title[1]} className="t-lrg" delay={0.1} />
           </h2>
           <p className="col-span-6 text-sm opacity-70 lg:col-span-3">{copy.repeat.text}</p>
         </div>

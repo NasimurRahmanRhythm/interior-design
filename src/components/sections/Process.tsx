@@ -29,9 +29,9 @@ export default function Process({ steps, copy }: { steps: Step[]; copy: Copy }) 
   return (
     <section ref={root} data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
       <div className="grid-w">
-        <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-12">
+        <h2 className="col-span-6 flex flex-wrap items-baseline lg:col-span-12">
           <SplitTitle text={copy.title[0]} className="t-lrg" />
-          <SplitTitle text={copy.title[1]} className="t-lrg font-serif italic" delay={0.1} />
+          <SplitTitle text={copy.title[1]} className="t-lrg" delay={0.1} />
         </h2>
 
         <div className="process-line relative col-span-6 mt-14 lg:col-span-12 lg:mt-20">

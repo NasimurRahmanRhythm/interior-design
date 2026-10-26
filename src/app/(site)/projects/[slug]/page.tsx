@@ -7,9 +7,10 @@ import ProjectCard from "@/components/ProjectCard";
 import RevealText from "@/components/RevealText";
 import SplitTitle from "@/components/SplitTitle";
 import Gallery from "@/components/sections/Gallery";
+import Subsections from "@/components/sections/Subsections";
 import { fill } from "@/lib/db/fill";
 import { COPY } from "@/lib/copy";
-import { getDivision, getProject, getProjects, getSettings } from "@/lib/db/queries";
+import { getDivision, getProject, getProjectSections, getProjects, getSettings } from "@/lib/db/queries";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
-  const projects = await getProjects();
+  const [projects, sections] = await Promise.all([getProjects(), getProjectSections(slug)]);
   const copy = COPY.project;
   const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
@@ -58,7 +59,7 @@ export default async function ProjectPage({ params }: Params) {
                   {division.name}
                 </Link>
               </p>
-              <h1 className="flex flex-wrap gap-x-[0.25em] font-display text-[clamp(2.8rem,8vw,8.5rem)] leading-[0.95] tracking-[-0.04em]">
+              <h1 className="flex flex-wrap font-display text-[clamp(2.8rem,8vw,8.5rem)] leading-[0.95] tracking-[-0.04em]">
                 {project.title.split(" ").map((word, i) => (
                   <SplitTitle key={i} text={word} when="ready" delay={i * 0.06} />
                 ))}
@@ -89,6 +90,8 @@ export default async function ProjectPage({ params }: Params) {
           </div>
         </div>
       </section>
+
+      <Subsections items={sections} />
 
       <section data-theme="light" className="bg-bone pb-20 text-ink lg:pb-28">
         <Gallery images={project.images} title={project.title} />

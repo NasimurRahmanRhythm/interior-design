@@ -9,6 +9,7 @@ import { deleteProject } from "@/lib/admin/actions/projects";
 import { projectOptions } from "../form-data";
 import ProjectForm, { type ProjectRow } from "../ProjectForm";
 import ProjectImages from "./ProjectImages";
+import SectionsEditor from "@/components/admin/SectionsEditor";
 
 export const metadata: Metadata = { title: "Edit project" };
 
@@ -17,11 +18,12 @@ export default async function EditProject({ params, searchParams }: { params: Pr
   const { supabase } = await requireAdmin();
   const { data: project } = await supabase
     .from("projects")
-    .select("*, project_images(id, path, width, height, alt, sort_order)")
+    .select("*, project_images(id, path, width, height, alt, sort_order), project_sections(id, title, description, image_path, sort_order)")
     .eq("id", id)
     .maybeSingle();
   if (!project) notFound();
   const images = [...project.project_images].sort((a, b) => a.sort_order - b.sort_order);
+  const sections = [...project.project_sections].sort((a, b) => a.sort_order - b.sort_order);
   const created = Boolean((await searchParams).created);
 
   return (
@@ -38,6 +40,7 @@ export default async function EditProject({ params, searchParams }: { params: Pr
       </PageTitle>
       <ProjectForm project={project as ProjectRow} {...await projectOptions(supabase)} />
       <ProjectImages projectId={project.id} slug={project.slug} title={project.title} images={images} />
+      <SectionsEditor kind="project" parentId={project.id} sections={sections} folder={`projects/${project.slug}`} />
     </>
   );
 }

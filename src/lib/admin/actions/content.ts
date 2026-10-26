@@ -5,7 +5,7 @@ import { requireAdmin } from "../auth";
 import { failed, json } from "../form";
 import type { Result } from "../result";
 
-const SETTINGS = ["brand", "contact", "trust_stats", "hero_panels", "quote_options"] as const;
+const SETTINGS = ["brand", "contact", "trust_stats", "quote_options", "reach"] as const;
 export type SettingsColumn = (typeof SETTINGS)[number];
 
 export async function saveSettings(column: SettingsColumn, _prev: Result, form: FormData): Promise<Result> {

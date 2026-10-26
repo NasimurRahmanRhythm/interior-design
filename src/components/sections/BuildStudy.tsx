@@ -89,7 +89,7 @@ export default function BuildStudy({ builds, finishes, copy, initial = "stall" }
               <h2 className="t-h1">
                 {build.title[0]}
                 <br />
-                <span className="ml-[0.8em] italic">{build.title[1]}</span>
+                <span className="ml-[0.8em]">{build.title[1]}</span>
               </h2>
 
               <ol className="relative mt-6 flex flex-col gap-3 pl-6 lg:mt-12 lg:gap-6">

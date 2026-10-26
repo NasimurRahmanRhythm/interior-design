@@ -9,10 +9,10 @@ const slugWord = (w: string) =>
     .normalize("NFKD")
     .replace(/[^a-z0-9]+/g, "");
 
-// The web address of a new project or service: the first three words of its
+// The web address of a new project, service or blog post: the first three words of its
 // title ("Yolo Fest Concert Dhaka" -> "yolo-fest-concert"), numbered if taken.
-export async function uniqueSlug(supabase: Supabase, table: "projects" | "divisions", title: string) {
-  const column = table === "projects" ? "slug" : "id";
+export async function uniqueSlug(supabase: Supabase, table: "projects" | "divisions" | "blog_posts", title: string) {
+  const column = table === "divisions" ? "id" : "slug";
   const base = title.split(/\s+/).map(slugWord).filter(Boolean).slice(0, 3).join("-") || "item";
   const { data } = await supabase.from(table).select(column).like(column, `${base}%`);
   const taken = new Set((data ?? []).map((r: Record<string, string>) => r[column]));

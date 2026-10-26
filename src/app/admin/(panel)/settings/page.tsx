@@ -11,7 +11,6 @@ export const metadata: Metadata = { title: "Settings" };
 const SECTIONS: { column: SettingsColumn; title: string; text: string; hide?: string[] }[] = [
   { column: "brand", title: "Brand", text: "Name, the three logo lines, tagline and belief." },
   { column: "contact", title: "Contact details", text: "Address, phones, WhatsApp number (digits only), emails and hours, used across the site.", hide: ["map"] },
-  { column: "hero_panels", title: "Landing hero photos", text: "The photos floating in the landing page hero." },
   { column: "trust_stats", title: "Landing figures", text: "The numbers that count up under the hero." },
   { column: "quote_options", title: "Quote form choices", text: "Budget and timeline choices. The service choices come from Services.", hide: ["divisions"] },
 ];

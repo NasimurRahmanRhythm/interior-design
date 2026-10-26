@@ -88,9 +88,9 @@ export default function Divisions({ divisions, copy }: { divisions: Division[]; 
         <div className="sticky top-0 flex h-svh flex-col overflow-hidden pt-24 lg:pt-28">
           <div className="px-[var(--margin)] text-center">
             <p className="t-label opacity-60">{copy.eyebrow}</p>
-            <h2 className="mt-3 flex flex-wrap items-baseline justify-center gap-x-[0.25em] font-display text-[clamp(2.6rem,6.4vw,6.5rem)] leading-[0.9] tracking-[-0.035em]">
+            <h2 className="mt-3 flex flex-wrap items-baseline justify-center font-display text-[clamp(2.6rem,6.4vw,6.5rem)] leading-[0.9] tracking-[-0.035em]">
               <SplitTitle text={copy.title[0]} />
-              <SplitTitle text={copy.title[1]} className="font-serif italic" delay={0.08} />
+              <SplitTitle text={copy.title[1]}  delay={0.08} />
               <SplitTitle text={copy.title[2]} delay={0.16} />
             </h2>
           </div>
@@ -99,12 +99,17 @@ export default function Divisions({ divisions, copy }: { divisions: Division[]; 
             className="relative flex flex-1 cursor-grab touch-pan-y items-center justify-center select-none"
             style={{ perspective: "1800px" }}
           >
-            <div ref={ring} className="relative h-[40svh] w-[min(54vw,300px)] lg:h-[44svh] lg:w-[22vw]" style={{ transformStyle: "preserve-3d" }}>
+            {/* --card sets the ring's size; phones get a smaller ring so the side cards stay on screen. */}
+            <div
+              ref={ring}
+              className="relative h-[36svh] w-[var(--card)] [--card:min(44vw,300px)] lg:h-[44svh] lg:w-[22vw] lg:[--card:min(54vw,300px)]"
+              style={{ transformStyle: "preserve-3d" }}
+            >
               {divisions.map((item, i) => (
                 <article
                   key={item.id}
                   className="div-card absolute inset-0 flex flex-col border border-bone/10 bg-stone shadow-[0_40px_60px_rgba(0,0,0,0.45)]"
-                  style={{ transform: `rotateY(${i * STEP}deg) translateZ(calc(min(54vw, 300px) * 0.85))` }}
+                  style={{ transform: `rotateY(${i * STEP}deg) translateZ(calc(var(--card) * 0.85))` }}
                 >
                   <div className="fit min-h-0 flex-1">
                     <Image src={item.card.image} alt="" fill sizes="(min-width:1024px) 22vw, 54vw" className="object-cover" draggable={false} />
@@ -139,8 +144,8 @@ export default function Divisions({ divisions, copy }: { divisions: Division[]; 
                 </motion.ul>
               </AnimatePresence>
             </div>
-            <div className="col-span-6 mt-5 flex items-center justify-between gap-4 pr-16 lg:col-span-4 lg:mt-0 lg:justify-end lg:pr-20">
-              <p className="t-label opacity-60 lg:hidden">{copy.hint}</p>
+            <div className="col-span-6 mt-5 flex flex-wrap items-center gap-x-4 gap-y-3 pr-16 lg:col-span-4 lg:mt-0 lg:justify-end lg:pr-20">
+              <p className="t-label w-full opacity-60 lg:hidden">{copy.hint}</p>
               <div className="flex gap-2">
                 <Button href={`/services/${current.id}`}>{copy.explore}</Button>
                 <Button href="#contact">{copy.cta}</Button>

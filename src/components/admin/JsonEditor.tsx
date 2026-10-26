@@ -9,7 +9,7 @@ type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 // Keys holding a storage path get an image picker.
 const IMAGE_KEYS = new Set(["image", "image_path", "cover_image", "logo_path"]);
 // Short lists whose length the page layout depends on (heading lines and the like).
-const FIXED_KEYS = new Set(["title", "lines", "wordmark", "place"]);
+const FIXED_KEYS = new Set(["title", "lines", "place"]);
 // Keys whose text runs to sentences.
 const LONG_KEYS = /text|detail|summary|intro|overview|mission|promise|lead|response|landmarks|note/;
 

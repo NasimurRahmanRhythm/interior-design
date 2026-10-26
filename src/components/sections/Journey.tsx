@@ -105,9 +105,9 @@ export default function Journey({ journey, copy }: { journey: Milestone[]; copy:
       <div className="grid-w pb-6 pt-24 lg:pt-36">
         <div className="col-span-6 lg:col-span-7">
           <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
-          <h2 className="flex flex-wrap items-baseline gap-x-[0.25em]">
+          <h2 className="flex flex-wrap items-baseline">
             <SplitTitle text={copy.title[0]} className="t-lrg" />
-            <SplitTitle text={copy.title[1]} className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={copy.title[1]} className="t-lrg" delay={0.1} />
           </h2>
         </div>
         <p className="col-span-6 mt-6 max-w-sm text-sm leading-relaxed opacity-70 lg:col-span-3 lg:col-start-10 lg:mt-0 lg:self-end">
@@ -165,7 +165,7 @@ export default function Journey({ journey, copy }: { journey: Milestone[]; copy:
                           fill="currentColor"
                         >
                           {stop.year}{" "}
-                          <tspan className="font-serif italic">{stop.title}</tspan>
+                          <tspan>{stop.title}</tspan>
                         </text>
                       </g>
                     </g>
@@ -194,7 +194,7 @@ export default function Journey({ journey, copy }: { journey: Milestone[]; copy:
                   {String(active + 1).padStart(2, "0")} / {String(journey.length).padStart(2, "0")}
                 </p>
                 <p className="mt-3 font-display text-[clamp(3rem,6vw,5.5rem)] leading-none tracking-[-0.04em]">{item.year}</p>
-                <p className="t-h3 mt-2 italic">{item.title}</p>
+                <p className="t-h3 mt-2">{item.title}</p>
                 <p className="mt-3 max-w-xs text-sm leading-relaxed opacity-75">{item.detail}</p>
                 {item.image && (
                   <div className="fit mt-5 hidden aspect-[4/3] w-full max-w-xs lg:block">

@@ -52,7 +52,7 @@ export default async function AboutPage() {
         <h2 className="mt-6 px-[var(--margin)] font-display text-[clamp(2.6rem,10.5vw,10rem)] leading-[0.9] tracking-[-0.035em]">
           <SplitTitle text={copy.belief.title[0]} />
           <br />
-          <SplitTitle text={copy.belief.title[1]} className="font-serif italic text-[#c9a07f]" delay={0.1} />
+          <SplitTitle text={copy.belief.title[1]} className="text-[#c9a07f]" delay={0.1} />
         </h2>
         <RevealText className="mx-auto mt-10 max-w-md px-[var(--margin)] text-sm leading-relaxed opacity-70">
           {copy.belief.text}
@@ -61,9 +61,9 @@ export default async function AboutPage() {
 
       <section data-theme="light" className="bg-[#ece4d6] py-24 text-ink lg:py-36">
         <div className="grid-w gap-y-12">
-          <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-12">
+          <h2 className="col-span-6 flex flex-wrap items-baseline lg:col-span-12">
             <SplitTitle text={copy.why.title[0]} className="t-lrg" />
-            <SplitTitle text={copy.why.title[1]} className="t-lrg font-serif italic" delay={0.1} />
+            <SplitTitle text={copy.why.title[1]} className="t-lrg" delay={0.1} />
           </h2>
           {about.pillars.map((p) => (
             <div key={p.title} className="col-span-6 border-t border-ink/25 pt-6 lg:col-span-4">
@@ -85,9 +85,9 @@ export default async function AboutPage() {
         <div className="grid-w">
           <div className="col-span-6 text-center lg:col-span-12">
             <p className="t-label opacity-60">{copy.wheel.eyebrow}</p>
-            <h2 className="mt-4 flex flex-wrap items-baseline justify-center gap-x-[0.25em]">
+            <h2 className="mt-4 flex flex-wrap items-baseline justify-center">
               <SplitTitle text={copy.wheel.title[0]} className="t-lrg" />
-              <SplitTitle text={copy.wheel.title[1]} className="t-lrg font-serif italic" delay={0.08} />
+              <SplitTitle text={copy.wheel.title[1]} className="t-lrg" delay={0.08} />
               <SplitTitle text={copy.wheel.title[2]} className="t-lrg" delay={0.16} />
             </h2>
           </div>
@@ -103,7 +103,7 @@ export default async function AboutPage() {
           <ul className="col-span-6 grid grid-cols-2 gap-y-6 lg:col-span-9 lg:grid-cols-4">
             {about.values.map((v, i) => (
               <li key={v} className="font-display text-[clamp(1.8rem,3vw,3rem)] leading-none tracking-[-0.03em]">
-                <span className={i % 2 ? "font-serif italic" : ""}>{v}</span>
+                <span>{v}</span>
               </li>
             ))}
           </ul>
@@ -116,7 +116,7 @@ export default async function AboutPage() {
       <section data-theme="dark" className="bg-ink py-24 text-bone lg:py-32">
         <div className="grid-w items-end gap-y-8">
           <h2 className="t-h1 col-span-6 lg:col-span-8">
-            {copy.cta.title[0]} <span className="italic">{copy.cta.title[1]}</span>
+            {copy.cta.title[0]} <span>{copy.cta.title[1]}</span>
           </h2>
           <div className="col-span-6 flex flex-wrap gap-3 lg:col-span-4 lg:justify-end">
             {copy.cta.buttons.map((b: { label: string; href: string }) => (

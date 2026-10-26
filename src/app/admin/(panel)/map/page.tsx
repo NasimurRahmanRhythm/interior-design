@@ -5,6 +5,8 @@ import PageTitle from "@/components/admin/PageTitle";
 import { card, input, label } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/admin/auth";
 import { deleteMapPoint, saveMapPoint } from "@/lib/admin/actions/map";
+import { saveSettings } from "@/lib/admin/actions/content";
+import JsonEditor from "@/components/admin/JsonEditor";
 import { BD_PATH, BD_VIEWBOX, project } from "@/lib/bangladesh";
 
 export const metadata: Metadata = { title: "Map" };
@@ -28,7 +30,10 @@ function Fields({ p }: { p?: Point }) {
 
 export default async function MapPage() {
   const { supabase } = await requireAdmin();
-  const { data, error } = await supabase.from("map_points").select("id, title, link, lat, lon").order("created_at");
+  const [{ data, error }, { data: settings }] = await Promise.all([
+    supabase.from("map_points").select("id, title, link, lat, lon").order("created_at"),
+    supabase.from("site_settings").select("reach").eq("id", 1).single(),
+  ]);
   if (error) throw new Error(error.message);
   const points = data as Point[];
 
@@ -40,6 +45,13 @@ export default async function MapPage() {
       />
       <div className="grid gap-8 xl:grid-cols-[1fr_22rem]">
         <div className="flex flex-col gap-4">
+          <section className={card}>
+            <h2 className="font-serif text-2xl">Figures beside the map</h2>
+            <p className="mb-5 mt-1 text-sm text-ink/60">The big numbers next to the map, e.g. 18 malls and 20+ newspapers.</p>
+            <ActionForm action={saveSettings.bind(null, "reach")} submit="Save figures">
+              <JsonEditor name="value" value={settings?.reach ?? { figures: [] }} hide={["pins", "cities"]} />
+            </ActionForm>
+          </section>
           <section className={card}>
             <h2 className="mb-4 font-serif text-2xl">Add a place</h2>
             <ActionForm action={saveMapPoint.bind(null, null)} submit="Add to map" clearOnSuccess>

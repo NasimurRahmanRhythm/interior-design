@@ -22,12 +22,13 @@ export type Settings = {
   socials: Link[];
   nav: Link[];
   trust: { value: number; suffix: string; label: string }[];
-  heroPanels: { image: string; alt: string }[];
+  // The figures beside the landing page map, set in Admin → Map.
+  mapFigures: { value: string; unit: string; text: string }[];
   quote: { divisions: string[]; budgets: string[]; timelines: string[] };
 };
 
 // A place on the landing page map; the title shows on hover.
-export type MapPoint = { id: string; title: string; lat: number; lon: number };
+export type MapPoint = { id: string; title: string; link: string; lat: number; lon: number };
 
 export type ProjectImage = { src: string; w: number; h: number; alt: string };
 
@@ -86,3 +87,10 @@ export type About = {
 
 // Page copy is stored per section as JSON; each section reads the fields it needs.
 export type Copy = Record<string, any>;
+
+// A blog post or a client appreciation: title, sanitised HTML and one image.
+export type Post = { slug: string; title: string; body: string; image?: string; date: string; excerpt: string };
+export type Appreciation = { id: string; title: string; body: string; image?: string };
+
+// A titled block with text and a photo on a project or service page.
+export type Subsection = { title: string; description: string; image?: string };

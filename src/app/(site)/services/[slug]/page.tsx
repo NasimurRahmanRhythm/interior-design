@@ -11,7 +11,8 @@ import DivisionScene from "@/components/three/DivisionScene";
 import { fill } from "@/lib/db/fill";
 import { finishes, processSteps } from "@/lib/content";
 import { COPY } from "@/lib/copy";
-import { getDivisions, getProjects, getQuote, getSettings } from "@/lib/db/queries";
+import { getDivisionSections, getDivisions, getProjects, getQuote, getSettings } from "@/lib/db/queries";
+import Subsections from "@/components/sections/Subsections";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -28,7 +29,13 @@ export default async function DivisionPage({ params }: Params) {
   const { slug } = await params;
   const copy = COPY.division;
   const home = COPY.home;
-  const [settings, quote, divisions, projects] = await Promise.all([getSettings(), getQuote(), getDivisions(), getProjects()]);
+  const [settings, quote, divisions, projects, sections] = await Promise.all([
+    getSettings(),
+    getQuote(),
+    getDivisions(),
+    getProjects(),
+    getDivisionSections(slug),
+  ]);
   const index = divisions.findIndex((d) => d.id === slug);
   if (index < 0) notFound();
   const page = divisions[index];
@@ -63,9 +70,9 @@ export default async function DivisionPage({ params }: Params) {
               </p>
               <h1 className="flex flex-col font-display text-[clamp(3.2rem,6.6vw,7rem)] leading-[0.9] tracking-[-0.035em]">
                 <SplitTitle text={page.title[0]} when="ready" />
-                {page.title[1] && <SplitTitle text={page.title[1]} className="ml-[0.4em] font-serif italic text-[#c9a07f]" when="ready" delay={0.1} />}
+                {page.title[1] && <SplitTitle text={page.title[1]} className="ml-[0.4em] text-[#c9a07f]" when="ready" delay={0.1} />}
               </h1>
-              {page.line && <p className="t-h5 mt-8 max-w-md italic">{page.line}</p>}
+              {page.line && <p className="t-h5 mt-8 max-w-md">{page.line}</p>}
               <RevealText className="mt-4 max-w-md text-sm leading-relaxed opacity-75">{page.intro}</RevealText>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button href="#contact" big>
@@ -93,12 +100,18 @@ export default async function DivisionPage({ params }: Params) {
         </section>
       )}
 
+      {sections.length > 0 && (
+        <div className="bg-bone pt-20 lg:pt-28">
+          <Subsections items={sections} />
+        </div>
+      )}
+
       {(page.groups.length > 0 || page.extra) && (
         <section data-theme="light" className="bg-[#ece4d6] py-24 text-ink lg:py-36">
           <div className="grid-w gap-y-14">
-            <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-12">
+            <h2 className="col-span-6 flex flex-wrap items-baseline lg:col-span-12">
               <SplitTitle text={text.what_title[0]} className="t-lrg" />
-              <SplitTitle text={text.what_title[1]} className="t-lrg font-serif italic" delay={0.1} />
+              <SplitTitle text={text.what_title[1]} className="t-lrg" delay={0.1} />
             </h2>
             {page.groups.map((g, i) => (
               <div key={g.title} className="col-span-6 border-t border-ink/20 pt-6 sm:col-span-3 lg:col-span-4">
@@ -133,9 +146,9 @@ export default async function DivisionPage({ params }: Params) {
       {all.length > 0 && (
         <section data-theme="dark" className="bg-ink py-24 text-bone lg:py-36">
           <div className="grid-w items-end gap-y-6">
-            <h2 className="col-span-6 flex flex-wrap items-baseline gap-x-[0.25em] lg:col-span-9">
+            <h2 className="col-span-6 flex flex-wrap items-baseline lg:col-span-9">
               <SplitTitle text={text.projects_title[0]} className="t-lrg" />
-              <SplitTitle text={text.projects_title[1]} className="t-lrg font-serif italic" delay={0.1} />
+              <SplitTitle text={text.projects_title[1]} className="t-lrg" delay={0.1} />
             </h2>
             <div className="col-span-6 lg:col-span-3 lg:justify-self-end">
               <Button href={`/projects?division=${page.id}`}>{fill(text.all_projects, { count: all.length })}</Button>
