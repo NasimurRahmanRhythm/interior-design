@@ -100,10 +100,10 @@ export const COPY = {
       read: "Read"
     },
     demo: {
-      eyebrow: "Demo work",
-      title: ["See our work", "in 3D"],
-      text: "A stall, an office and an event stage, built piece by piece as you scroll. Drag to turn them and switch the finishes.",
-      cta: "See our demo work"
+      eyebrow: "To see our demo work",
+      title: ["Want to see", "a demo?"],
+      text: "Open the demo page and watch an expo stall being built, step by step in 3D, as you scroll. You can also try an office and an event stage there.",
+      cta: "Yes, show me the demo"
     },
     work: {
       cta: {

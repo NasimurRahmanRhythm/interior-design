@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import RevealText from "@/components/RevealText";
 import SplitTitle from "@/components/SplitTitle";
-import BuildStudy from "@/components/sections/BuildStudy";
 import Contact from "@/components/sections/Contact";
-import { builds, finishes, processDetail } from "@/lib/content";
+import { processDetail } from "@/lib/content";
 import { COPY } from "@/lib/copy";
 import { getDivisions, getQuote, getSettings } from "@/lib/db/queries";
 import type { Division } from "@/lib/db/types";
@@ -39,7 +38,6 @@ export default async function ProcessPage() {
         </ol>
       </section>
 
-      <BuildStudy builds={builds} finishes={finishes} copy={home.build} />
 
       <section data-theme="light" className="bg-[#ece4d6] py-24 text-ink lg:py-36">
         <div className="grid-w gap-y-12">
