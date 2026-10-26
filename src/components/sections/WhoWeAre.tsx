@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Button from "../Button";
 import RevealText from "../RevealText";
 import SplitTitle from "../SplitTitle";
 import { gsap, useGSAP } from "@/lib/gsap";
@@ -104,13 +105,12 @@ export default function WhoWeAre({ text, services, facebook, copy }: Props) {
           })}
         </ul>
         {facebook && (
-          <p className="col-span-6 mt-8 text-sm lg:col-span-12">
-            {copy.more}{" "}
-            <a href={facebook} target="_blank" rel="noreferrer" className="link-u text-umber">
-              {copy.more_link}
-            </a>
-            .
-          </p>
+          <div className="col-span-6 mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 lg:col-span-12">
+            <p className="text-sm opacity-75">{copy.more}</p>
+            <Button href={facebook} external big>
+              {copy.more_link} ↗
+            </Button>
+          </div>
         )}
       </div>
     </section>

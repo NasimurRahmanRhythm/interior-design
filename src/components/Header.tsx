@@ -71,7 +71,7 @@ export default function Header({ brand, contact, nav, copy }: Props) {
           light ? "text-ink" : "text-bone"
         }`}
       >
-        <div className="grid-w items-center">
+        <div className="grid-w relative items-center">
           <Link
             href="/"
             aria-label={`${brand.name} — home`}
@@ -80,9 +80,8 @@ export default function Header({ brand, contact, nav, copy }: Props) {
             <Image src="/images/logo-mark.png" alt="" width={512} height={512} priority className="h-11 w-auto lg:h-14" />
           </Link>
 
-          <span className="hidden h-8 w-px justify-self-center bg-current opacity-30 lg:col-start-4 lg:block" />
-
-          <nav className="pointer-events-auto hidden items-center gap-[var(--gap)] lg:col-span-3 lg:col-start-5 lg:flex">
+          {/* Centred on the bar, whatever the logo and the buttons on the right take up. */}
+          <nav className="pointer-events-auto absolute left-1/2 hidden -translate-x-1/2 items-center gap-[var(--gap)] lg:flex">
             {copy.primary_links.map((l: { label: string; href: string }) => (
               <Button key={l.href} href={l.href}>
                 {l.label}

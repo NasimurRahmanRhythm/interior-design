@@ -84,8 +84,8 @@ export const COPY = {
       eyebrow: "Who we are",
       title: ["One partner,", "every side of the brief"],
       services_label: "What we do",
-      more: "To see more of our services,",
-      more_link: "click here"
+      more: "To see more of our services, visit our Facebook page.",
+      more_link: "See more on Facebook"
     },
     appreciation: {
       eyebrow: "Client appreciation",
