@@ -8,7 +8,7 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { onReady } from "@/lib/ready";
 import type { Copy } from "@/lib/db/types";
 
-const BrandScene = dynamic(() => import("../three/BrandScene"), { ssr: false });
+const HeroScene = dynamic(() => import("../three/HeroScene"), { ssr: false });
 
 // Phones get a smaller size so the widest line ("for your Brand,") stays on screen.
 const LINE = "block font-display text-[10.5vw] leading-[0.9] tracking-[-0.04em] lg:text-[clamp(3.6rem,9.4vw,10rem)]";
@@ -56,8 +56,8 @@ export default function Hero({ belief, copy }: Props) {
           style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(123,81,54,0.26), transparent 60%)" }}
         />
 
-        {/* The print and promo pieces from the brand division float behind the headline; drag to turn them. */}
-        <BrandScene className="absolute inset-x-0 top-[8svh] h-[52svh] lg:inset-y-0 lg:left-[50%] lg:right-0 lg:top-0 lg:h-auto" />
+        {/* Architecture and interior pieces float behind the headline; drag to turn them. */}
+        <HeroScene className="absolute inset-x-0 top-[8svh] h-[52svh] lg:inset-y-0 lg:left-[52%] lg:right-0 lg:top-0 lg:h-auto" />
 
         <h1 className="pointer-events-none absolute inset-x-0 bottom-[22svh] z-10 px-[var(--margin)] lg:bottom-auto lg:top-[22svh]">
           <span className="hero-l1 block">
