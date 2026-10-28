@@ -28,7 +28,7 @@ export default function BlogPosts({ posts, copy }: { posts: Post[]; copy: Copy }
     <section id="blog" data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
       <div className="grid-w items-end gap-y-6">
         <div className="col-span-6 lg:col-span-9">
-          <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
+          <p className="t-eyebrow mb-4 opacity-60">{copy.eyebrow}</p>
           <h2 className="t-h1">
             <SplitTitle text={copy.title[0]} />
             <SplitTitle text={copy.title[1]} className="text-umber" delay={0.1} />

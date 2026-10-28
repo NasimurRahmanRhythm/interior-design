@@ -83,9 +83,7 @@ export const COPY = {
     who: {
       eyebrow: "Who we are",
       title: ["One partner,", "every side of the brief"],
-      services_label: "What we do",
-      more: "To see more of our services, visit our Facebook page.",
-      more_link: "See more on Facebook"
+      services_label: "What we do"
     },
     appreciation: {
       eyebrow: "Client appreciation",
@@ -110,6 +108,7 @@ export const COPY = {
         href: "/projects",
         label: "All projects"
       },
+      facebook: "See more on Facebook",
       title: [
         "Selected",
         "Work"

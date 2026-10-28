@@ -48,7 +48,7 @@ export default async function AboutPage() {
       </section>
 
       <section data-theme="dark" className="bg-ink py-28 text-center text-bone lg:py-40">
-        <p className="t-label opacity-60">{copy.belief.eyebrow}</p>
+        <p className="t-eyebrow opacity-60">{copy.belief.eyebrow}</p>
         <h2 className="mt-6 px-[var(--margin)] font-display text-[clamp(2.6rem,10.5vw,10rem)] leading-[0.9] tracking-[-0.035em]">
           <SplitTitle text={copy.belief.title[0]} />
           <br />
@@ -84,7 +84,7 @@ export default async function AboutPage() {
       <section data-theme="dark" className="overflow-hidden bg-ink py-24 text-bone lg:py-36">
         <div className="grid-w">
           <div className="col-span-6 text-center lg:col-span-12">
-            <p className="t-label opacity-60">{copy.wheel.eyebrow}</p>
+            <p className="t-eyebrow opacity-60">{copy.wheel.eyebrow}</p>
             <h2 className="mt-4 flex flex-wrap items-baseline justify-center">
               <SplitTitle text={copy.wheel.title[0]} className="t-lrg" />
               <SplitTitle text={copy.wheel.title[1]} className="t-lrg" delay={0.08} />
@@ -99,7 +99,7 @@ export default async function AboutPage() {
 
       <section data-theme="light" className="bg-bone py-24 text-ink lg:py-32">
         <div className="grid-w gap-y-10">
-          <p className="t-label col-span-6 opacity-60 lg:col-span-3">{copy.values.eyebrow}</p>
+          <p className="t-eyebrow col-span-6 opacity-60 lg:col-span-3">{copy.values.eyebrow}</p>
           <ul className="col-span-6 grid grid-cols-2 gap-y-6 lg:col-span-9 lg:grid-cols-4">
             {about.values.map((v, i) => (
               <li key={v} className="font-display text-[clamp(1.8rem,3vw,3rem)] leading-none tracking-[-0.03em]">

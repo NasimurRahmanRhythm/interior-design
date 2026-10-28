@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { addressLine } from "@/lib/address";
 import type { Copy, Settings } from "@/lib/db/types";
 
 type Props = Pick<Settings, "brand" | "contact" | "socials" | "nav"> & { copy: Copy };
@@ -22,8 +23,8 @@ export default function Footer({ brand, contact, socials, nav, copy }: Props) {
 
         <div className="col-span-6 sm:col-span-3 lg:col-span-2 lg:col-start-7">
           <p className="t-label mb-4 opacity-50">{copy.labels.office}</p>
-          <a href={contact.map} target="_blank" rel="noreferrer" className="link-u block w-fit text-sm opacity-70" aria-label="Open our office in Google Maps">
-            {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
+          <a href={contact.map} target="_blank" rel="noreferrer" className="link-u block w-fit text-sm font-semibold opacity-90" aria-label="Open our office in Google Maps">
+            {contact.address.map(addressLine).flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
           </a>
           <p className="mt-3 text-sm opacity-50">{contact.hours_short}</p>
         </div>

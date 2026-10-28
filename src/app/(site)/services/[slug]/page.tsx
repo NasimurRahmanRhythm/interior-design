@@ -65,7 +65,7 @@ export default async function DivisionPage({ params }: Params) {
 
           <div className="grid-w pointer-events-none relative min-h-svh content-end pb-10 pt-[62svh] lg:content-center lg:pb-0 lg:pt-28">
             <div className="pointer-events-auto col-span-6 lg:col-span-5">
-              <p className="t-label mb-4 opacity-60">
+              <p className="t-eyebrow mb-4 opacity-60">
                 {fill(page.scene ? text.eyebrow : text.eyebrow_photo, { number: page.number })}
               </p>
               <h1 className="flex flex-col font-display text-[clamp(3.2rem,6.6vw,7rem)] leading-[0.9] tracking-[-0.035em]">

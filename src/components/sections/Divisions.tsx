@@ -87,10 +87,10 @@ export default function Divisions({ divisions, copy }: { divisions: Division[]; 
       <div className="div-track relative h-[340vh]">
         <div className="sticky top-0 flex h-svh flex-col overflow-hidden pt-24 lg:pt-28">
           <div className="px-[var(--margin)] text-center">
-            <p className="t-label opacity-60">{copy.eyebrow}</p>
+            <p className="t-eyebrow opacity-60">{copy.eyebrow}</p>
             <h2 className="mt-3 flex flex-wrap items-baseline justify-center font-display text-[clamp(2.6rem,6.4vw,6.5rem)] leading-[0.9] tracking-[-0.035em]">
               <SplitTitle text={copy.title[0]} />
-              <SplitTitle text={copy.title[1]}  delay={0.08} />
+              <SplitTitle text={copy.title[1]} delay={0.08} />
               <SplitTitle text={copy.title[2]} delay={0.16} />
             </h2>
           </div>

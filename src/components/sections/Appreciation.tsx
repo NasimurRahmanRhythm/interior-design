@@ -13,7 +13,7 @@ export default function Appreciation({ items, copy }: { items: Item[]; copy: Cop
     <section id="appreciation" data-theme="light" className="overflow-hidden bg-[#ece4d6] py-24 text-ink lg:py-36">
       <div className="grid-w">
         <div className="col-span-6 lg:col-span-12">
-          <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
+          <p className="t-eyebrow mb-4 opacity-60">{copy.eyebrow}</p>
           <h2 className="t-h1">
             <SplitTitle text={copy.title[0]} />
             <SplitTitle text={copy.title[1]} className="text-umber" delay={0.1} />

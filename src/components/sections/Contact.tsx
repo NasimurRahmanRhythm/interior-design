@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { addressLine } from "@/lib/address";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import Button from "../Button";
@@ -47,7 +48,7 @@ export default function Contact({ contact, quote, copy, division }: Props) {
     <section id="contact" data-theme="dark" className="bg-ink py-24 text-bone lg:py-36">
       <div className="grid-w gap-y-14">
         <div className="col-span-6 lg:col-span-12">
-          <p className="t-label opacity-60">{copy.eyebrow}</p>
+          <p className="t-eyebrow opacity-60">{copy.eyebrow}</p>
           <h2 className="mt-4 flex flex-col">
             <SplitTitle text={copy.title[0]} className="t-lrg" />
             <span className="flex flex-wrap items-baseline">
@@ -66,7 +67,7 @@ export default function Contact({ contact, quote, copy, division }: Props) {
             <p className="t-label mb-2 opacity-50">{copy.labels.office}</p>
             <a href={contact.map} target="_blank" rel="noreferrer" className="group block w-fit" aria-label="Open our office in Google Maps">
               <RevealText className="leading-relaxed opacity-85 transition-opacity group-hover:opacity-100">
-                {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
+                {contact.address.map(addressLine).flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
               </RevealText>
               <span className="t-label link-u mt-2 inline-block opacity-70">Open in Google Maps ↗</span>
             </a>

@@ -104,7 +104,7 @@ export default function Journey({ journey, copy }: { journey: Milestone[]; copy:
     <section ref={root} id="journey" data-theme="light" className="relative bg-[#ece4d6] text-ink">
       <div className="grid-w pb-6 pt-24 lg:pt-36">
         <div className="col-span-6 lg:col-span-7">
-          <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
+          <p className="t-eyebrow mb-4 opacity-60">{copy.eyebrow}</p>
           <h2 className="flex flex-wrap items-baseline">
             <SplitTitle text={copy.title[0]} className="t-lrg" />
             <SplitTitle text={copy.title[1]} className="t-lrg" delay={0.1} />

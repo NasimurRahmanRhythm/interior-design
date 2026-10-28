@@ -7,7 +7,7 @@ export default function Clients({ rows, copy }: { rows: Logo[][]; copy: Copy }) 
   return (
     <section id="clients" data-theme="light" className="overflow-hidden bg-[#ece4d6] py-24 text-ink lg:py-36">
       <div className="grid-w">
-        <p className="t-label col-span-6 text-center opacity-60 lg:col-span-12">{copy.eyebrow}</p>
+        <p className="t-eyebrow col-span-6 text-center opacity-60 lg:col-span-12">{copy.eyebrow}</p>
         <h2 className="t-h1 col-span-6 mt-6 text-center lg:col-span-10 lg:col-start-2">
           <RevealText as="span" className="block">
             {copy.title[0]}

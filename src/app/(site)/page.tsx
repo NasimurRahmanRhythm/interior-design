@@ -46,13 +46,13 @@ export default async function HomePage() {
     <>
       <Hero belief={settings.brand.belief} copy={copy.hero} />
       <Trust trust={settings.trust} copy={copy.trust} />
-      <WhoWeAre text={about.overview} services={services} facebook={facebook} copy={copy.who} />
+      <WhoWeAre text={about.overview} services={services} copy={copy.who} />
       <Journey journey={journey} copy={copy.journey} />
       <Clients rows={marquee} copy={copy.clients} />
       {ring.length > 0 && <Divisions divisions={ring} copy={copy.divisions} />}
       <DemoCta copy={copy.demo} />
       <Process steps={processSteps} copy={copy.process} />
-      {work.length > 0 && <Work work={work} copy={copy.work} />}
+      {work.length > 0 && <Work work={work} facebook={facebook} copy={copy.work} />}
       <Reach points={points} figures={settings.mapFigures} copy={copy.reach} />
       {appreciations.length > 0 && <Appreciation items={appreciations} copy={copy.appreciation} />}
       {posts.length > 0 && <BlogPosts posts={posts} copy={copy.blog} />}

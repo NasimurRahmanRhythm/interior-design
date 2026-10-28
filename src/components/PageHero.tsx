@@ -12,7 +12,7 @@ export default function PageHero({ title, accent, label, text }: Props) {
           {accent && <SplitTitle text={accent} className="t-lrg self-end text-umber lg:mr-[6vw]" when="ready" delay={0.12} />}
         </h1>
         <div className="col-span-6 lg:col-span-3 lg:col-start-10">
-          <p className="t-label mb-4 opacity-50">{label}</p>
+          <p className="t-eyebrow mb-4 opacity-50">{label}</p>
           <RevealText className="text-sm opacity-80">{text}</RevealText>
         </div>
       </div>

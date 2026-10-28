@@ -23,7 +23,7 @@ export default async function PostPage({ params }: Params) {
       <section data-theme="dark" className="bg-ink pb-14 pt-40 text-bone lg:pb-20 lg:pt-52">
         <div className="grid-w">
           <div className="col-span-6 lg:col-span-9">
-            <p className="t-label mb-4 opacity-60">
+            <p className="t-eyebrow mb-4 opacity-60">
               {new Date(post.date).toLocaleDateString("en-GB", { dateStyle: "long", timeZone: "Asia/Dhaka" })}
             </p>
             <h1 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] leading-[0.98] tracking-[-0.035em]">

@@ -8,7 +8,7 @@ import SplitTitle from "../SplitTitle";
 import { gsap, useGSAP } from "@/lib/gsap";
 import type { Copy, Project } from "@/lib/db/types";
 
-export default function Work({ work, copy }: { work: Project[]; copy: Copy }) {
+export default function Work({ work, facebook, copy }: { work: Project[]; facebook?: string; copy: Copy }) {
   const root = useRef<HTMLElement>(null);
   const strip = useRef<HTMLDivElement>(null);
 
@@ -50,10 +50,15 @@ export default function Work({ work, copy }: { work: Project[]; copy: Copy }) {
           <div className="grid-w relative z-10 items-end">
             <h2 className="col-span-6 flex flex-wrap items-baseline font-display text-[clamp(3.4rem,8vw,8rem)] leading-[0.9] tracking-[-0.04em] lg:col-span-9">
               <SplitTitle text={copy.title[0]} />
-              <SplitTitle text={copy.title[1]}  delay={0.1} />
+              <SplitTitle text={copy.title[1]} delay={0.1} />
             </h2>
-            <div className="col-span-6 mt-4 lg:col-span-3 lg:mt-0 lg:justify-self-end">
+            <div className="col-span-6 mt-4 flex flex-wrap gap-2 lg:col-span-3 lg:mt-0 lg:justify-self-end">
               <Button href={copy.cta.href}>{copy.cta.label}</Button>
+              {facebook && (
+                <Button href={facebook} external>
+                  {copy.facebook} ↗
+                </Button>
+              )}
             </div>
           </div>
 

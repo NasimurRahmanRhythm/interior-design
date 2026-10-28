@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { addressLine } from "@/lib/address";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -131,16 +132,16 @@ export default function Header({ brand, contact, nav, copy }: Props) {
             aria-modal="true"
             aria-label="Site menu"
             data-lenis-prevent
-            className="fixed inset-0 z-[105] flex flex-col justify-end overflow-y-auto bg-ink text-bone"
+            className="fixed inset-0 z-[105] flex flex-col overflow-y-auto bg-ink text-bone"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.9, ease: EASE }}
           >
-            <div className="grid-w pb-10 pt-32">
-              <ul className="col-span-6 lg:col-span-8">
+            <div className="grid-w mt-auto w-full items-end pb-10 pt-28">
+              <ul className="col-span-6 border-t border-bone/10 lg:col-span-8">
                 {nav.map((item, i) => (
-                  <li key={item.label} className="overflow-hidden">
+                  <li key={item.label} className="overflow-hidden border-b border-bone/10">
                     <motion.div
                       initial={{ y: "110%" }}
                       animate={{ y: 0 }}
@@ -150,11 +151,14 @@ export default function Header({ brand, contact, nav, copy }: Props) {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="group flex items-baseline gap-4 font-display text-[clamp(3rem,10vw,8.5rem)] leading-[0.92] tracking-[-0.035em] transition-colors duration-500 hover:text-umber"
+                        className="group flex items-center gap-4 py-[0.12em] font-display text-[clamp(2rem,min(7.5vw,6.6svh),5.25rem)] leading-[1.05] tracking-[-0.03em] transition-colors duration-500 hover:text-umber lg:gap-8"
                       >
-                        <span className="t-label w-6 opacity-40">0{i + 1}</span>
+                        <span className="t-label w-6 shrink-0 opacity-40">0{i + 1}</span>
                         <span className="transition-transform duration-700 ease-cubic group-hover:translate-x-[0.12em]">
                           {item.label}
+                        </span>
+                        <span className="ml-auto text-[0.4em] opacity-0 transition-[opacity,translate] duration-500 ease-cubic -translate-x-3 group-hover:translate-x-0 group-hover:opacity-100">
+                          →
                         </span>
                       </Link>
                     </motion.div>
@@ -170,7 +174,7 @@ export default function Header({ brand, contact, nav, copy }: Props) {
               >
                 <p className="t-label opacity-50">{brand.tagline}</p>
                 <p className="text-sm opacity-70">
-                  {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
+                  {contact.address.map(addressLine).flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
                 </p>
                 <div className="flex flex-col gap-1 text-sm">
                   {contact.phones.map((p) => (

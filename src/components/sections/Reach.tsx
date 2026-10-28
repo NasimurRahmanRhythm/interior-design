@@ -43,7 +43,7 @@ export default function Reach({ points, figures, copy }: Props) {
     <section ref={root} data-theme="light" className="overflow-hidden bg-bone py-24 text-ink lg:py-36">
       <div className="grid-w items-center gap-y-14">
         <div className="col-span-6 lg:col-span-5 lg:col-start-1">
-          <p className="t-label mb-6 opacity-60">{copy.eyebrow}</p>
+          <p className="t-eyebrow mb-6 opacity-60">{copy.eyebrow}</p>
           {figures.map((f, i) => (
             <div key={`${f.value}${f.unit}`} className={i ? "mt-8" : ""}>
               <p className="flex items-baseline gap-4">

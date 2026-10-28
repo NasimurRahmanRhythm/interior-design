@@ -3,18 +3,17 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "../Button";
 import RevealText from "../RevealText";
 import SplitTitle from "../SplitTitle";
 import { gsap, useGSAP } from "@/lib/gsap";
 import type { Copy, Division } from "@/lib/db/types";
 
-type Props = { text: string; services: Division[]; facebook?: string; copy: Copy };
+type Props = { text: string; services: Division[]; copy: Copy };
 
 // Who we are, with the services as a row of panels: the open one widens to show its
 // photo and description (hover on desktop, tap on phones). The panels wipe up into
 // place when the row scrolls into view.
-export default function WhoWeAre({ text, services, facebook, copy }: Props) {
+export default function WhoWeAre({ text, services, copy }: Props) {
   const root = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(0);
 
@@ -35,7 +34,7 @@ export default function WhoWeAre({ text, services, facebook, copy }: Props) {
     <section ref={root} id="who-we-are" data-theme="light" className="bg-bone py-24 text-ink lg:py-36">
       <div className="grid-w gap-y-8">
         <div className="col-span-6 lg:col-span-7">
-          <p className="t-label mb-4 opacity-60">{copy.eyebrow}</p>
+          <p className="t-eyebrow mb-4 opacity-60">{copy.eyebrow}</p>
           <h2 className="t-h1">
             <span className="block">
               <SplitTitle text={copy.title[0]} />
@@ -104,14 +103,6 @@ export default function WhoWeAre({ text, services, facebook, copy }: Props) {
             );
           })}
         </ul>
-        {facebook && (
-          <div className="col-span-6 mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 lg:col-span-12">
-            <p className="text-sm opacity-75">{copy.more}</p>
-            <Button href={facebook} external big>
-              {copy.more_link} ↗
-            </Button>
-          </div>
-        )}
       </div>
     </section>
   );

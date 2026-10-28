@@ -78,14 +78,14 @@ export default function BuildStudy({ builds, finishes, copy, initial = "stall" }
       <div className="build-track relative h-[460vh]">
         <div className="build-stage sticky top-0 h-svh overflow-hidden bg-bone text-ink">
           {/* On phones the label sits above the model instead of over it. */}
-          <p className="t-label pointer-events-none absolute inset-x-[var(--margin)] top-[max(15svh,7.5rem)] z-10 opacity-60 lg:hidden">{copy.eyebrow}</p>
+          <p className="t-eyebrow pointer-events-none absolute inset-x-[var(--margin)] top-[max(15svh,7.5rem)] z-10 opacity-60 lg:hidden">{copy.eyebrow}</p>
           {kind === "stall" && <StallScene progress={progress} finish={finishes[finish]} className={SCENE_CLASS} />}
           {kind === "office" && <RoomScene progress={progress} finish={finishes[finish]} className={SCENE_CLASS} />}
           {kind === "stage" && <StageScene progress={progress} finish={finishes[finish]} className={SCENE_CLASS} />}
 
           <div className="grid-w pointer-events-none absolute inset-0 content-end pb-8 lg:content-center lg:pb-0">
             <div className="pointer-events-auto col-span-6 lg:col-span-4">
-              <p className="t-label mb-4 hidden opacity-60 lg:block">{copy.eyebrow}</p>
+              <p className="t-eyebrow mb-4 hidden opacity-60 lg:block">{copy.eyebrow}</p>
               <h2 className="t-h1">
                 {build.title[0]}
                 <br />

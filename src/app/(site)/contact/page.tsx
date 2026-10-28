@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { addressLine } from "@/lib/address";
 import PageHero from "@/components/PageHero";
 import Contact from "@/components/sections/Contact";
 import { COPY } from "@/lib/copy";
@@ -26,7 +27,7 @@ export default async function ContactPage() {
           <div className="col-span-6 lg:col-span-4">
             <p className="t-label mb-4 opacity-50">{labels.visit}</p>
             <p className="t-h3">
-              {contact.address.flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
+              {contact.address.map(addressLine).flatMap((line, i) => (i ? [<br key={i} />, line] : [line]))}
             </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed opacity-70">{contact.landmarks}</p>
             <a href={contact.map} target="_blank" rel="noreferrer" className="t-label link-u mt-6 inline-block">
